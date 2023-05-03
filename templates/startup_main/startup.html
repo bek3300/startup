@@ -1,0 +1,147 @@
+{% extends './base.html' %}
+{% block content %}
+{% load static %}
+{% include './header.html' %}
+  <!-- ======= Breadcrumbs ======= -->
+  <div class="breadcrumbs">
+    <div class="container">
+
+      <div class="d-flex justify-content-between align-items-center">
+        <h2>Network</h2>
+        <ol>
+          <li><a class="active" href="{% url 'main:startup' %}">Startups</a></li>
+          <li><a href="#">Mentors</a></li>
+          <li><a href="#">Incubators</a></li>
+          <li><a href="#">Investors</a></li>
+          <li><a href="#">Gov't Bodies</a></li>
+          <li><a href="#">Disc. Forums</a></li>
+        </ol>
+      </div>
+
+    </div>
+  </div><!-- End Breadcrumbs -->
+
+ <!-- ======= Blog Section ======= -->
+ <section id="blog" class="blog">
+    <div class="container" data-aos="fade-up">
+
+      <div class="row g-5">
+
+        <div class="col-lg-3">
+
+            <div class="sidebar">
+  
+              <div class="sidebar-item search-form">
+                <h3 class="sidebar-title">Filter</h3>
+                <form action="" class="mt-3">
+                  <input type="text">
+                  <button type="submit"><i class="bi bi-search"></i></button>
+                </form>
+              </div><!-- End sidebar search formn-->
+  
+              <div class="sidebar-item categories">
+                <!-- <h3 class="sidebar-title">Categories</h3> -->
+                <ul class="mt-3">
+                    {% for filter in filters %}
+                  <li><a href="#"><i class="bi bi-plus-circle"></i>&nbsp;&nbsp;{{filter}}</a></li>
+                  {% endfor %}
+                </ul>
+              </div><!-- End sidebar categories-->
+  
+             
+  
+            </div><!-- End Blog Sidebar -->
+  
+          </div>
+
+        <div class="col-lg-9">
+
+          <div class="row gy-12 posts-list">
+            {% if startups %}
+{% for startup in startups %}
+            <div class="col-lg-4">
+              <article class="d-flex flex-column">
+
+              
+
+                <h2 class="title">
+                  <img src="{{startup.profile.profile_pic.url}}" alt="" style="max-width: 50px;">&nbsp;
+                  <a href="#">{{startup.description.name}}</a>
+                </h2>
+
+                <div class="content">
+                  <p>
+                    {{startup.description.description}}
+                  </p>
+                </div>
+               
+                <div class="read-more mt-auto align-self-end">
+                  <form id="connectForm" method="POST" class="row g-3">
+                    {% csrf_token %}
+                    <button type='submit' class="btn btn-primary connect" id="{{startup.profile.user.id}}">Connect</button>
+                  </form>
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Details</button>
+                </div>
+
+
+              </article>
+            </div><!-- End post list item -->
+
+            {% endfor %}
+            {% else %}
+            <h3> There is No Active Or Registered Startups</h3>
+            {% endif %}
+          </div><!-- End blog posts list -->
+
+        </div>
+
+
+      </div>
+
+    </div>
+  </section><!-- End Blog Section -->
+  <script>
+    $(document).ready(function() {
+  
+      // $.validator.addMethod('confirmPass', function(value) {
+      //   if($('#startup_password').val() == $('#startup_password2').val()){ return true; } return false;
+      // }, "Password and confirm password fields do not match");
+          // $("#startupForm").validate()
+          // $("#connectForm").validate()
+          jQuery('#connectForm').validate()
+          $("#connectForm").submit(function(event) {
+            event.preventDefault()
+            const csrfmiddlewaretoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      
+                    {% comment %} var connect =$(".connect"); {% endcomment %}
+                    {% comment %} console.log($('.connect').attr('id')) {% endcomment %}
+                    var fd = new FormData(); 
+                    fd.append('connect',$('.connect').attr('id'));
+                    
+                  
+                       
+                       $.ajax({
+                      headers: {'X-CSRFToken': csrfmiddlewaretoken},
+                      url: '{% url "main:connect" %}',
+                      data: fd,
+                      processData: false,
+                      contentType: false,
+                      type: 'POST',
+                      success: function(data){
+                        
+                      console.log(data)
+      
+                      },
+                      error: function(data){
+                          console.log(data.responseText)
+                       
+                      }
+                  });
+                 
+           
+      });
+      
+            })
+  </script>
+
+{% endblock content %}

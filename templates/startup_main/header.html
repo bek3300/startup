@@ -1,0 +1,51 @@
+  {% load static %}
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top" data-scrollto-offset="0">
+      <div class="container-fluid d-flex align-items-center justify-content-between">
+  
+        <a href="/homepage/" class="logo d-flex align-items-center scrollto me-auto me-lg-0">
+          <!-- Uncomment the line below if you also wish to use an image logo -->
+          <img src="{% static 'assets/img/AII-logo.png'%}" alt="">
+          <h1><span></span>Start-Up</h1>
+        </a>
+  
+        <nav id="navbar" class="navbar justify-content-center">
+          <div class="navbar-centered">
+          <ul>
+            <li><a class="nav-link scrollto" href="/">Home</a></li>
+            <li><a class="nav-link scrollto" href="/#about">About</a></li>
+            <li class="dropdown"><a href="#"><span>Network</span> <i class="bi bi-chevron-down"></i></a>
+              <ul>
+                <li><a href="{% url 'main:startup' %}">Startups</a></li>
+                <li><a href="#">Mentors</a></li>
+                <li><a href="#">Incubators</a></li>
+                <li><a href="#">Investors</a></li>
+                <li><a href="#">Gov't Bodies</a></li>
+                <li><a href="#">Disc. Forums</a></li>
+              </ul>
+            </li>
+            <li><a class="nav-link scrollto" href="#">Resources</a></li>
+            <li><a class="nav-link scrollto" href="#">Announcemets</a></li>
+            <li><a class="nav-link scrollto" href="/#contact">Contact</a></li>
+          </ul>
+        </div>
+          <i class="bi bi-list mobile-nav-toggle d-none"></i>
+          <div class="sign justify-content-end {% if  user.is_authenticated %} visually-hidden {% endif %}">
+
+            <ul>
+              <li><a class="btn" href="{% url 'main:login' %}">Login</a></li>
+              <li><a class="btn" href="{% url 'main:register' %}">Register</a></li>
+            </ul>
+            
+            
+          </div>
+        <!-- .navbar -->
+        
+  
+      </div>
+    </header><!-- End Header -->
+
+
+
+
+

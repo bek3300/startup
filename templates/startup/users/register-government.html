@@ -1,0 +1,20 @@
+{% load crispy_forms_tags %}
+<form method="POST" enctype="multipart/form-data">
+ 
+
+    <!-- Security token -->
+    {% csrf_token %}
+ 
+    <!-- Using the formset -->
+    {{ goveroment_form|crispy }}
+    
+    {{ goveroment_description|crispy }}
+    {{ region_form|crispy }}
+    {{ wereda_form|crispy }}
+    {{ goveroment_address|crispy }}
+    {{ user_form|crispy }}
+    {{ goveroment_profile|crispy }}
+     
+    <input type="submit" value="Submit">
+</form>
+

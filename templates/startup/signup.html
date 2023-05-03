@@ -1,0 +1,127 @@
+{% extends './base.html' %}
+{% block content %}
+{% load static %}
+<!-- {% include './upperHeader.html'%} -->
+{% include './navbarHeader.html'%}
+<title>{% block title %}User Registration Form{% endblock %}</title>
+
+<div class="container" style="margin-top:20px">
+  <div class="card card-fluid">
+    <div class="mb-3">
+      <label for="option-select" class="form-label">User Registration Type:</label>
+      <select class="form-select" id="option-select">
+        <option value="">Select Option</option>
+        <option value="option-1">startup</option>
+        <option value="option-2">mentor</option>
+        <option value="option-3">incubator/hub/acclerator</option>
+        <option value="option-4">donor/funder</option>
+        <option value="option-5">goveroment</option>
+      </select>
+    </div>
+    
+    <div id="option-1-content" class="d-none">
+      {% include './startupForm.html' %}
+    </div>
+    
+    <div id="option-2-content" class="d-none">
+      {% include './mentor.html' %}
+    </div>
+    
+    <div id="option-3-content" class="d-none">
+      {% include './incubatorForm.html' %}
+
+    </div>
+    <div id="option-4-content" class="d-none">
+      {% include './donorForm.html' %}
+    </div>
+    <div id="option-5-content" class="d-none">
+      {% include './goveromentForm.html' %}
+    </div>
+    
+   
+  </div>
+  
+</div>
+<div class="card card-fluid">
+  <div class="mb-3">
+    <label for="option-select" class="form-label">User Registration Type:</label>
+    <select class="form-select" id="option-select">
+      <option value="">Select Option</option>
+      <option value="option-1">startup</option>
+      <option value="option-2">mentor</option>
+      <option value="option-3">incubator/hub/acclerator</option>
+      <option value="option-4">donor/funder</option>
+      <option value="option-5">goveroment</option>
+    </select>
+  </div>
+  
+  <div id="option-1-content" class="d-none">
+    {% include './startupForm.html' %}
+  </div>
+  
+  <div id="option-2-content" class="d-none">
+    {% include './mentor.html' %}
+  </div>
+  
+  <div id="option-3-content" class="d-none">
+    {% include './incubatorForm.html' %}
+
+  </div>
+  <div id="option-4-content" class="d-none">
+    {% include './donorForm.html' %}
+  </div>
+  <div id="option-5-content" class="d-none">
+    {% include './goveromentForm.html' %}
+  </div>
+  
+ 
+</div>
+<script>
+  const optionSelect = document.getElementById('option-select');
+const option1Content = document.getElementById('option-1-content');
+const option2Content = document.getElementById('option-2-content');
+const option3Content = document.getElementById('option-3-content');
+const option4Content = document.getElementById('option-4-content');
+const option5Content = document.getElementById('option-5-content');
+
+optionSelect.addEventListener('change', () => {
+  if (optionSelect.value === 'option-1') {
+    option1Content.classList.remove('d-none');
+    option2Content.classList.add('d-none');
+    option3Content.classList.add('d-none');
+    option4Content.classList.add('d-none');
+    option5Content.classList.add('d-none');
+  } else if (optionSelect.value === 'option-2') {
+    option1Content.classList.add('d-none');
+    option2Content.classList.remove('d-none');
+    option3Content.classList.add('d-none');
+    option4Content.classList.add('d-none');
+    option5Content.classList.add('d-none');
+  } else if (optionSelect.value === 'option-3') {
+    option1Content.classList.add('d-none');
+    option2Content.classList.add('d-none');
+    option3Content.classList.remove('d-none');
+    option4Content.classList.add('d-none');
+    option5Content.classList.add('d-none');
+  }
+  else if (optionSelect.value === 'option-4') {
+    option1Content.classList.add('d-none');
+    option2Content.classList.add('d-none');
+    option3Content.classList.add('d-none');
+    option4Content.classList.remove('d-none');
+    option5Content.classList.add('d-none');
+  }
+  else if (optionSelect.value === 'option-5') {
+    option1Content.classList.add('d-none');
+    option2Content.classList.add('d-none');
+    option3Content.classList.add('d-none');
+    option4Content.classList.add('d-none');
+    option5Content.classList.remove('d-none');
+  }
+});
+
+
+</script>
+  {% endblock %}
+
+

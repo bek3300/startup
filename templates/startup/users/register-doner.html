@@ -1,0 +1,19 @@
+{% load crispy_forms_tags %}
+<form method="POST" enctype="multipart/form-data">
+ 
+    <!-- Security token -->
+    {% csrf_token %}
+ 
+    <!-- Using the formset -->
+    {{ doner_form|crispy }}
+    
+    {{ doner_description|crispy }}
+    {{ region_form|crispy }}
+    {{ wereda_form|crispy }}
+    {{ doner_address|crispy }}
+    {{ user_form|crispy }}
+    {{ doner_profile|crispy }}
+     
+    <input type="submit" value="Submit">
+</form>
+

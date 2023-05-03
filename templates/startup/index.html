@@ -1,0 +1,88 @@
+{% extends './base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- {% include './upperHeader.html'%} -->
+{% include './navbarHeader.html'%}
+
+<div class="container">
+  
+<div class="row " style="margin-top: 5%;">
+<div class="col-mx-auto-auto" style="display: flex;
+justify-content: center; flex-flow: inherit;">
+    <h3>What we are</h3>
+    <br>
+    <div class="row">
+        <p>
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+             Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+              when an unknown printer took a galley of type and scrambled it to make a type 
+              specimen book. It has survived not only five centuries, but also the leap into 
+              electronic typesetting, remaining essentially unchanged. It was popularised in 
+              the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and
+               more recently with desktop publishing software like Aldus PageMaker including
+                versions of Lorem Ipsu
+        </p>
+
+    </div>
+    <div class="row">
+     <div class="col">
+        <h4>
+            50000+
+        </h4>
+        <h4>
+            startup is good        
+            </h4>
+     </div>
+     <div class="col">
+        <h4>
+            50000+
+        </h4>
+        <h4>
+startup is good        
+</h4>
+     </div>
+     <div class="col">
+        <h4>
+            50000+
+        </h4>
+        <h4>
+            startup is good        
+            </h4>
+     </div>
+
+    </div>
+
+</div>
+</div>
+</div>
+<div class="container">
+    <div id="map" class="col-6 mx-auto">
+
+    </div>
+
+</div>
+{% include './footer.html' %}
+
+<script>
+     var map = new ol.Map({
+        layers: [
+          new ol.layer.Tile({
+            source: new ol.source.OSM()
+          })
+        ],
+        target: 'map',
+        controls: ol.control.defaults({
+          attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+            collapsible: false
+          })
+        }),
+        view: new ol.View({
+          center: [40, 8],
+          zoom: 5,
+          projection:'EPSG:4326'
+        })
+      });
+    </script>
+    {% endblock %}
+    

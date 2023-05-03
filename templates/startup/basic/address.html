@@ -1,0 +1,82 @@
+{% load crispy_forms_tags %}
+
+    <div class="row">
+      <div class="form-group col-md-4">
+        <div data-region={{typeOff}} id="reg">
+        {{ region_form.region_name|as_crispy_field }}
+        </div>
+      </div>
+      <div class="form-group col-md-4" id={{typeOff}} name='weredas'>
+        {{ wereda_form.wereda_name|as_crispy_field }}
+      </div>
+    </div>
+    <div class="row">
+   
+      <div class="form-group col-md-3">
+        {{ startup_address.phone_number|as_crispy_field }}
+      </div>
+      <div class="form-group col-md-3">
+        {{ startup_address.city_name|as_crispy_field }}
+      </div>
+      <div class="form-group col-md-3">
+        {{ startup_address.website|as_crispy_field }}
+      </div>
+    </div>
+<script>
+    $(function(){
+          var reg = document.querySelectorAll("[id='reg']");
+          for (var i = 0, length = reg.length; i < length; i++) {
+            $("#"+reg[i].dataset.region+ " select[name=region_name]").on("change", function () {
+              console.log($("#"+this.parentNode.parentNode.dataset.region+" select[name=wereda_name]"))
+              
+            geoserver_url= "http://localhost:8088/geoserver/elri/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=elri%3AETH_adm2&maxFeatures=50&outputFormat=application%2Fjson"
+          var self=this
+            $.getJSON( geoserver_url, function( data ) {
+                var items = [];
+                var wereda_names = data.features.filter(x=>x.properties['NAME_1']==self.value);
+                $("#"+self.parentNode.parentNode.dataset.region+" select[name=wereda_name]").empty()
+               wereda_names.forEach(function(e){
+                $("#"+self.parentNode.parentNode.dataset.region+" select[name=wereda_name]").append('<option value="'+e.properties['NAME_2']+'">'+e.properties['NAME_2'])+'</option>';
+                
+               })
+              });
+
+            })}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        {% comment %} $("#id_region_name").on('change', function(){
+            $("#id_wereda_name").empty()
+            geoserver_url= "http://localhost:8088/geoserver/elri/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=elri%3AETH_adm2&maxFeatures=50&outputFormat=application%2Fjson"
+          var self=this
+            $.getJSON( geoserver_url, function( data ) {
+                var items = [];
+                
+                
+                var wereda_names = data.features.filter(x=>x.properties['NAME_1']==self.value);
+               wereda_names.forEach(function(e){
+                
+                $("#id_wereda_name").append('<option value="'+e.properties['NAME_2']+'">'+e.properties['NAME_2'])+'</option>';
+                
+               })
+              });
+          
+        }) {% endcomment %}
+         
+       })
+    
+     
+
+</script>
