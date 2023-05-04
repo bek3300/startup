@@ -142,7 +142,6 @@ class DescriptionForm(ModelForm):
         }
 
 class DescriptionIncubatorForm(ModelForm):
-    sector = forms.CharField(blank=False)
     class Meta:
         model = Description
         fields = ['name','description','logo'] 
@@ -150,6 +149,7 @@ class DescriptionIncubatorForm(ModelForm):
         widgets = {
         'description': forms.Textarea(attrs={'rows':5, 'cols':40}),            # 'roll': forms.NumberInput(attrs={'class': 'form-control'}),
         }
+  
  
 
 

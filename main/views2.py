@@ -350,16 +350,11 @@ def saveDescription(request,description_instance):
     description.save()
     return description
 def saveIncubatorDescription(request,incubator_description_instance):
-    def checkSector():
-        if incubator_description_instance['sector'] == 'Other':
-            return request.POST['other__sector']
-        else:
-            return ''
     description = Description(name=incubator_description_instance['name'],
                               description=incubator_description_instance['description'],
                               sector='Other',
                               logo=incubator_description_instance['logo'],
-                              other_sector=checkSector(),)
+                              other_sector='no',)
     description.save()
     return description
 def saveAddress(request,address_instance,context):

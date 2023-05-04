@@ -30,7 +30,33 @@
 
   <!-- Template Main CSS File -->
   <link href="{% static 'assets/css/main.css'%}" rel="stylesheet">
+  <link rel="stylesheet" href="https://openlayers.org/en/v3.20.1/css/ol.css" type="text/css">
+  <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+  <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+  <script src="https://openlayers.org/en/v3.20.1/build/ol.js"></script>
+  <style>
+    a.skiplink {
+      position: absolute;
+      clip: rect(1px, 1px, 1px, 1px);
+      padding: 0;
+      border: 0;
+      height: 1px;
+      width: 1px;
+      overflow: hidden;
+    }
+    a.skiplink:focus {
+      clip: auto;
+      height: auto;
+      width: auto;
+      background-color: #fff;
+      padding: 0.3em;
+    }
+    #map:focus {
+      outline: #4A74A8 solid 0.15em;
+    }
+  </style>
 </head>
+
 
 <body>
   {% include './messages.html' %}
@@ -50,7 +76,27 @@
 
   <!-- Template Main JS File -->
   <script src="{% static 'assets/js/main.js'%}"></script>
+  <script>
+    var map = new ol.Map({
+      layers: [
+        new ol.layer.Tile({
+          source: new ol.source.OSM()
+        })
+      ],
+      target: 'map',
+      controls: ol.control.defaults({
+        attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+          collapsible: false
+        })
+      }),
+      view: new ol.View({
+        center: [39, 9],
+        zoom: 6,
+        projection:'EPSG:4326'
+      })
+    });
 
+  </script>
   {% block scripts %}{% endblock %}
 </body>
 
