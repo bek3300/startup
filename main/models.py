@@ -4,6 +4,8 @@ from django.db.models.signals import post_save
 from django.contrib.auth.models import User,Group
 from django.core.exceptions import ValidationError
 from .modelVariables import *
+from multiselectfield import MultiSelectField
+from django.contrib.postgres.fields import ArrayField
 
 class EthRegion(models.Model):
      region_name = models.CharField(
@@ -168,19 +170,23 @@ class IncubatorsAccelatorsHub(models.Model):
         choices=OWNERSHIP,
         blank=False,null=False
     )
+    ownership_other = models.CharField(
+        max_length=50,
+        blank=True,null=True
+    )
     description = models.OneToOneField(Description, on_delete=models.DO_NOTHING,blank=False,null=False,related_name='iha_description')
-
-    focusIndustry = models.CharField(
-        verbose_name = 'Focus Industry',
-        max_length=30,blank=False,null=False)
+    
+    focusIndustry = ArrayField(models.CharField(
+        # choices=SECTORS,
+        max_length=500),default=list
+        )
     
 
-    level = models.CharField(
-        verbose_name = 'Level',
-        max_length=50,
-        choices=STARTUP_STAGE,
-        blank=False,null=False
-    )
+    level = ArrayField(models.CharField(
+        max_length=500,
+        # choices=STARTUP_STAGE,
+        # read_only=False,
+    ),size=20,default=list)
     funded_by = models.CharField(
         verbose_name = 'Funded By',
         max_length=50,
@@ -192,9 +198,9 @@ class IncubatorsAccelatorsHub(models.Model):
         verbose_name = 'Program Duration',
         max_length=50,
         choices=PROGRAM_DURATION,
-        blank=False,null=False
+        blank=True,null=True
     )
-    attachments = models.FileField(upload_to='incubetor/attachments',blank=True,null=True)
+    attachments = models.FileField(upload_to='incubetor/attachments',blank=True,null=True,help_text="please upload relevant documents max 10")
     profile = models.OneToOneField(Profile, on_delete=models.DO_NOTHING,blank=False,null=False,related_name='iha_address')
     def __str__(self):
         return self.description.name.__str__()

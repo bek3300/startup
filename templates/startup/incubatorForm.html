@@ -6,7 +6,7 @@
     <form id="incubator_" method="post" enctype="multipart/form-data">
      
       {% csrf_token %}
-      <input hidden name="Incubator/Hub/Acclerator" value="Incubator/Hub/Acclerator">
+      <input hidden name="Startup" value="Incubator/Hub/Acclerator">
       <div id="basicsIncubator/Hub/Acclerator">
         <h4 style="color: #226470;" style="color: #226470;">Incubator/Hub/Acclerator Basics</h4>
         {% include "./basic/basic.html" with typeOff="incubator_"  %}
@@ -18,7 +18,19 @@
         <div class="form-group col-md-4">
           {{ incubator_form.ownership|as_crispy_field }}
         </div>
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-2 d-none" id="other_ownership">
+          <label for="id_other_ownership" class="form-label">
+            Specify Ownership<span class="asteriskField">*</span>
+          </label>
+          <input
+            type="text"
+            name="other__ownership"
+            maxlength="30"
+            class="textinput form-control"
+            id="id_other_ownership"
+          />
+        </div>
+        <div class="form-group col-md-4 " style='max-height: 120px;overflow: auto;'>
           {{ incubator_form.focusIndustry|as_crispy_field }}
         </div>
     </div>
@@ -26,8 +38,20 @@
         <div class="form-group col-md-3">
           {{ incubator_form.level|as_crispy_field }}
         </div>
-        <div class="form-group col-md-3">
+        <div class="form-group col-md-2">
           {{ incubator_form.funded_by|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-2 d-none" id="other_funded_by">
+          <label for="id_other_funded_by" class="form-label">
+            Specify Fund<span class="asteriskField">*</span>
+          </label>
+          <input
+            type="text"
+            name="other__funded_by"
+            maxlength="30"
+            class="textinput form-control"
+            id="id_other_funded_by"
+          />
         </div>
         <div class="form-group col-md-3">
             {{ incubator_form.program_duration|as_crispy_field }}
@@ -52,7 +76,7 @@
           {{ user_form.first_name|as_crispy_field }}
         </div>
         <div class="form-group col-md-4 ">
-          {{ startup_profile.middile_name|as_crispy_field }}
+          {{ profile.middile_name|as_crispy_field }}
         </div>
         <div class="form-group col-md-4 ">
           {{ user_form.last_name|as_crispy_field }}
@@ -68,7 +92,7 @@
         </div>
         <div 
          class="form-group col-md-4 ">
-          {{ startup_profile.birth_date|as_crispy_field }}
+          {{ profile.birth_date|as_crispy_field }}
         </div>
       </div>
       <div class="row">
@@ -80,22 +104,55 @@
       </div>
       <div class="row">
         <div class="form-group col-md-3 ">
-          {{ startup_profile.profile_pic|as_crispy_field }}
+          {{ profile.profile_pic|as_crispy_field }}
         </div>
         <div
          class="form-group col-md-3 ">
-          {{ startup_profile.contact|as_crispy_field }}
+          {{ profile.contact|as_crispy_field }}
         </div>
         <div
          class="form-group col-md-3 ">
-          {{ startup_profile.secondary_email|as_crispy_field }}
+          {{ profile.secondary_email|as_crispy_field }}
         </div>
         <div
          class="form-group col-md-3 ">
-          {{ startup_profile.gender|as_crispy_field }}
+          {{ profile.gender|as_crispy_field }}
         </div>
       </div>
     </div>
       <button type="submit" class="btn btn-primary">Register</button>
     </form>
-
+<script>
+  $("#id_funded_by").on("change", function () {
+    console.log(this.value)
+    if (this.value === "Other") {
+      $("#id_other_funded_by").prop("required", function () {
+        return true;
+        
+      });
+      $("#other_funded_by").removeClass("d-none");
+    }
+    if (this.value !== "Other") {
+      $("#other_funded_by").addClass("d-none");
+      $("#id_other_funded_by").prop("required", function () {
+        return false;
+      });
+    }
+  })
+  $("#id_ownership").on("change", function () {
+    console.log(this.value)
+    if (this.value === "Other") {
+      $("#id_other_ownership").prop("required", function () {
+        return true;
+        
+      });
+      $("#other_ownership").removeClass("d-none");
+    }
+    if (this.value !== "Other") {
+      $("#other_ownership").addClass("d-none");
+      $("#id_other_ownership").prop("required", function () {
+        return false;
+      });
+    }
+  })
+</script>

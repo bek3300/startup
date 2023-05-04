@@ -103,12 +103,12 @@ def explore(request):
 def profile(request):
     profile = Profile.objects.get(user=request.user)
     context['startup_form']= StartupForm(instance=Startup.objects.get(profile=profile))
-    context['startup_description']= DescriptionForm(instance=Startup.objects.get(profile=profile).description)
+    context['description']= DescriptionForm(instance=Startup.objects.get(profile=profile).description)
     context['region_form']= RegionEditForm(instance = EthRegion.objects.get(pk=Wereda.objects.get(pk=Startup.objects.get(profile=profile).address.location_id).regionId.id) )
     context['wereda_form']= WeredaForm(instance=Wereda.objects.get(pk=Startup.objects.get(profile=profile).address.location_id))
-    context['startup_address']= AddressForm(instance=Startup.objects.get(profile=profile).address)
+    context['address']= AddressForm(instance=Startup.objects.get(profile=profile).address)
     context['user_form']= UserEditForm(instance = request.user)
-    context['startup_profile']= ProfileForm(instance = Startup.objects.get(profile=profile).profile)
+    context['profile']= ProfileForm(instance = Startup.objects.get(profile=profile).profile)
     if request.method== 'POST':
         if profile == 'Government':
             pass
@@ -173,12 +173,12 @@ def profile(request):
                 print(e)
             profile = Profile.objects.get(user=request.user)
             context['startup_form']= StartupForm(instance=Startup.objects.get(profile=profile))
-            context['startup_description']= DescriptionForm(instance=Startup.objects.get(profile=profile).description)
+            context['description']= DescriptionForm(instance=Startup.objects.get(profile=profile).description)
             context['region_form']= RegionEditForm(instance = EthRegion.objects.get(pk=Wereda.objects.get(pk=Startup.objects.get(profile=profile).address.location_id).regionId.id) )
             context['wereda_form']= WeredaForm(instance=Wereda.objects.get(pk=Startup.objects.get(profile=profile).address.location_id))
-            context['startup_address']= AddressForm(instance=Startup.objects.get(profile=profile).address)
+            context['address']= AddressForm(instance=Startup.objects.get(profile=profile).address)
             context['user_form']= UserEditForm(instance = request.user)
-            context['startup_profile']= ProfileForm(instance = Startup.objects.get(profile=profile).profile)
+            context['profile']= ProfileForm(instance = Startup.objects.get(profile=profile).profile)
             return render (request,'startup/admin/profile.html',context)
             
 
@@ -280,11 +280,7 @@ def connect_list_view(request, pk=None):
 		if len(Connect.objects.filter(
 			from_user=request.user).filter(to_user=p.user)) == 1:
 				button_status = 'friend_request_sent'
-	print(u)
-	print(request.user)
-	print(u == request.user)
-	print(friends)
-	print(sent_friend_requests)
+
 	context = {
 		'u': u,
 		'button_status': button_status,
@@ -334,192 +330,263 @@ def startup(request):
         startups = Startup.objects.all()
         context['startups'] = startups
         return render(request,'startup_main/startup.html', context)
+def saveWereda(context):
+    region= EthRegion.objects.get(region_name=context['region_form'].cleaned_data['region_name'])
+    wereda = Wereda(wereda_name=context['wereda_form'].data['wereda_name'], regionId=region)
+    wereda.save()
+    return wereda
+
+def saveDescription(request,description_instance):
+    def checkSector():
+        if description_instance['sector'] == 'Other':
+            return request.POST['other__sector']
+        else:
+            return ''
+    description = Description(name=description_instance['name'],
+                              description=description_instance['description'],
+                              sector=description_instance['sector'],
+                              logo=description_instance['logo'],
+                              other_sector=checkSector(),)
+    description.save()
+    return description
+def saveIncubatorDescription(request,incubator_description_instance):
+    def checkSector():
+        if incubator_description_instance['sector'] == 'Other':
+            return request.POST['other__sector']
+        else:
+            return ''
+    description = Description(name=incubator_description_instance['name'],
+                              description=incubator_description_instance['description'],
+                              sector='Other',
+                              logo=incubator_description_instance['logo'],
+                              other_sector=checkSector(),)
+    description.save()
+    return description
+def saveAddress(request,address_instance,context):
+    address= Address(
+         country='Ethiopia',
+         location=saveWereda(context),
+         phone_number=address_instance['phone_number'],
+         city_name=address_instance['city_name'],
+         website=address_instance['website'],
+         )
+    address.save()
+    return address
+
+def saveUser(user_instance):
+    usero=User(username=user_instance['username'],
+                email=user_instance['email'],
+                is_active = False,
+                first_name = user_instance['first_name'],
+                last_name = user_instance['last_name']
+                )
+    usero.set_password(user_instance['password'])
+    usero.save()
+    return usero
+
+def saveProfile(user_instance,profile_instance,group):
+    profile= Profile(
+         middile_name=profile_instance['middile_name'],
+         birth_date=profile_instance['birth_date'],
+         user=saveUser(user_instance),
+         profile_pic=profile_instance['profile_pic'],
+         contact=profile_instance['contact'],
+         secondary_email=profile_instance['secondary_email'],
+         gender=profile_instance['gender'],
+         group=group
+         )
+    profile.save()
+    return profile
+
+def saveStartup(startup_instance,
+                request,
+                description_instance,
+                address_instance,
+                user_instance,profile_instance,group):
+    startup = Startup(establishment_year=startup_instance['establishment_year'],
+        market_scope=startup_instance['market_scope'],
+        stage=startup_instance['stage'],
+        description=saveDescription(request,description_instance),
+        address=saveAddress(request,address_instance,context),
+        profile=saveProfile(user_instance,profile_instance,group)
+        )
+    startup.save()
+    return startup
+
+
+def saveIncubator(incubator_instance,
+                request,
+                incubator_description_instance,
+                address_instance,
+                user_instance,profile_instance,group):
+    def setFundedOther():
+        if incubator_instance['funded_by'] == 'Other':
+            return request.POST['other__funded_by']
+        else:
+            return ''
+    def setOwnerOther():
+        if incubator_instance['ownership'] == 'Other':
+            return request.POST['other__ownership']
+        else:
+            return ''
+        
+    incubator = IncubatorsAccelatorsHub(service=incubator_instance['service'],
+        ownership=incubator_instance['ownership'],
+        ownership_other=setOwnerOther(),
+        focusIndustry=incubator_instance['focusIndustry'],
+        level=incubator_instance['level'],
+        funded_by=incubator_instance['funded_by'],
+        funded_by_other=setFundedOther(),
+        program_duration=incubator_instance['program_duration'],
+        attachments=incubator_instance['attachments'],
+        description=saveIncubatorDescription(request,incubator_description_instance),
+        address=saveAddress(request,address_instance,context),
+        profile=saveProfile(user_instance,profile_instance,group)
+        )
+    incubator.save()
+    return incubator
+
+def saveMentor(mentor_instance,request,description_instance,address_instance,user_instance,profile_instance,group):
+    def checkEduLevel():
+        if mentor_instance['educational_level'] == 'other':
+            return request.POST['other_educational_level']
+        else:
+            return ''
+    def checkBackground():
+        if mentor_instance['educational_background'] == 'other':
+            return request.POST['other_educational_background']
+        else:
+            return ''
+    def checkMentorArea():
+         if mentor_instance['mentor_area'] == 'other':
+            return request.POST['other_mentor_area']
+         else:
+              return ''
+    mentor = Mentor(educational_level=mentor_instance['educational_level'],
+    educational_level_other=checkEduLevel(),
+    educational_background = mentor_instance['educational_background'],
+    educational_background_other = checkBackground(),
+    mentor_area = mentor_instance['mentor_area'],
+    mentor_area_other = checkMentorArea() ,
+    airelated_expriance = mentor_instance['airelated_expriance'],
+    attachments = mentor_instance['attachments'],
+    description=saveDescription(request,description_instance),
+    address=saveAddress(request,address_instance,context),
+    profile=saveProfile(user_instance,profile_instance,group)
+    )
+    mentor.save()
+    return mentor
+     
+
+def saveStartupObject(request,context):
+    group = Group.objects.get(name=request.POST['Startup'])           
+    valid_startup = context['startup_form'].is_valid()
+    valid_descriptions = context['description'].is_valid()
+    valid_region= context['region_form'].is_valid() 
+    valid_address = context['address'].is_valid() 
+    valid_profile = context['profile'].is_valid()
+    valid_user = context['user_form'].is_valid()
+    address_instance = context['address'].cleaned_data
+    description_instance = context['description'].cleaned_data
+    profile_instance = context['profile'].cleaned_data
+    startup_instance = context['startup_form'].cleaned_data
+    user_instance = context['user_form'].cleaned_data 
+    if valid_descriptions and valid_startup  and valid_region and valid_address and valid_profile and valid_user:
+        try:
+            with transaction.atomic():
+                 saveStartup(startup_instance,
+                request,
+                description_instance,
+                address_instance,
+                user_instance,profile_instance,group)
+        except DatabaseError as e:
+            print(e)
+        return redirect("main:homepage")
+    else:
+        return redirect ("main:homepage")
     
-
-def saveStartupObject(request):
-            group = Group.objects.get(name=request.POST['Startup'])
-            context['startup_form']= StartupForm(request.POST, None)
-            context['startup_description']= DescriptionForm(request.POST, request.FILES)
-            context['region_form']= RegionForm(request.POST, None)
-            context['wereda_form']= WeredaForm(request.POST, None)
-            context['startup_address']= AddressForm(request.POST, None)
-            context['user_form']= UserForm(request.POST, None)
-            context['startup_profile']= ProfileForm(request.POST,request.FILES)
-            valid_startup = context['startup_form'].is_valid()
-            valid_descriptions = context['startup_description'].is_valid()
+def saveMentorObject(request,context):
+            print(context['address'].is_valid())
+            valid_mentor = context['mentor_form'].is_valid()
+            valid_descriptions = context['description'].is_valid()
             valid_region= context['region_form'].is_valid() 
-            valid_wereda = context['wereda_form'].is_valid() 
-            valid_address = context['startup_address'].is_valid() 
-            valid_profile = context['startup_profile'].is_valid()
+            valid_address = context['address'].is_valid() 
+            valid_profile = context['profile'].is_valid()
             valid_user = context['user_form'].is_valid() 
-
-            if valid_descriptions and valid_startup  and valid_region and valid_address and valid_profile and valid_user:
+            if valid_descriptions and valid_mentor  and valid_region and valid_address and valid_profile and valid_user:
+                group = Group.objects.get(name=request.POST['Startup'])
+                address_instance = context['address'].cleaned_data
+                description_instance = context['description'].cleaned_data
+                profile_instance = context['profile'].cleaned_data
+                mentor_instance = context['mentor_form'].cleaned_data
+                user_instance = context['user_form'].cleaned_data
                 try:
                     with transaction.atomic():
-                        wereda_instance = context['wereda_form']
-                        address_instance = context['startup_address'].cleaned_data
-                        description_instance = context['startup_description'].cleaned_data
-                        profile_instance = context['startup_profile'].cleaned_data
-                        startup_instance = context['startup_form'].cleaned_data
-                        user_instance = context['user_form'].cleaned_data
-                        region= EthRegion.objects.get(region_name=context['region_form'].cleaned_data['region_name'])
-                        wereda = Wereda(wereda_name=context['wereda_form'].data['wereda_name'], regionId=region)
-                        wereda.save()
-                        
-                        def checkSector():
-                            if description_instance['sector'] == 'Other':
-                                return request.POST['other__sector']
-                            else:
-                                return ''
-                        print(description_instance['sector'])
-
-                        description = Description(name=description_instance['name'],
-                                                description=description_instance['description'],
-                                                sector=description_instance['sector'],
-                                                logo=description_instance['logo'],
-                                                other_sector=checkSector(),)
-                        description.save()
-                        address= Address(
-                            country='Ethiopia',
-                            location=wereda,
-                            phone_number=address_instance['phone_number'],
-                            city_name=address_instance['city_name'],
-                            website=address_instance['website'],
-                                        )
-                        address.save()
-                        usero=User(username=user_instance['username'],
-                            email=user_instance['email'],
-                            is_active = False,
-                            first_name = user_instance['first_name'],
-                            last_name = user_instance['last_name']
-                            )
-                        usero.set_password(user_instance['password'])
-                        usero.save()
-                        
-                        profile= Profile(
-                            middile_name=profile_instance['middile_name'],
-                            birth_date=profile_instance['birth_date'],
-                            user=usero,
-                            profile_pic=profile_instance['profile_pic'],
-                            contact=profile_instance['contact'],
-                            secondary_email=profile_instance['secondary_email'],
-                            gender=profile_instance['gender'],
-                            group=group
-                                        )
-                        profile.save()
-                        startup = Startup(establishment_year=startup_instance['establishment_year'],
-                                        market_scope=startup_instance['market_scope'],
-                                        stage=startup_instance['stage'],
-                                        description=description,
-                                        address=address,
-                                        profile=profile
-                                        )
-                        startup.save()
-                        
+                        saveMentor(mentor_instance,
+                                   request,
+                                   description_instance,
+                                   address_instance,
+                                   user_instance,
+                                   profile_instance,
+                                   group)      
                 except DatabaseError as e:
                     print(e)
-               
                 return redirect("main:homepage")
-
             else:
-                return redirect ("main:homepage")
-            return redirect ("main:homepage")
-def saveMentorObject(request):
-            group = Group.objects.get(name=request.POST['Startup'])
-            context['mentor_form']= StartupForm(request.POST, None)
-            context['startup_description']= DescriptionForm(request.POST, request.FILES)
-            context['region_form']= RegionForm(request.POST, None)
-            context['wereda_form']= WeredaForm(request.POST, None)
-            context['startup_address']= AddressForm(request.POST, None)
-            context['user_form']= UserForm(request.POST, None)
-            context['startup_profile']= ProfileForm(request.POST,request.FILES)
-            valid_startup = context['mentor_form'].is_valid()
-            valid_descriptions = context['startup_description'].is_valid()
-            valid_region= context['region_form'].is_valid() 
-            valid_wereda = context['wereda_form'].is_valid() 
-            valid_address = context['startup_address'].is_valid() 
-            valid_profile = context['startup_profile'].is_valid()
-            valid_user = context['user_form'].is_valid() 
+                for field, errors in context['mentor_form'].errors.items():
+                     print("Error in field {}: {}".format(field, errors))
 
-            if valid_descriptions and valid_startup  and valid_region and valid_address and valid_profile and valid_user:
+def saveIncubatorObject(request,context):
+            valid_incubator_description = context['incubator_description'].is_valid()
+            valid_incubator = context['incubator_form'].is_valid()
+            valid_descriptions = context['description'].is_valid()
+            valid_region= context['region_form'].is_valid() 
+            valid_address = context['address'].is_valid() 
+            valid_profile = context['profile'].is_valid()
+            valid_user = context['user_form'].is_valid() 
+            print(valid_incubator_description)
+            if valid_incubator_description and valid_incubator  and valid_region and valid_address and valid_profile and valid_user:
+                print(Group.objects.get(name="Incubator/Hub/Acclerator"))
+                group = Group.objects.get(name=request.POST['Startup'])
+                address_instance = context['address'].cleaned_data
+                incubator_description_instance = context['incubator_description'].cleaned_data
+                profile_instance = context['profile'].cleaned_data
+                incubator_instance = context['incubator_form'].cleaned_data
+                user_instance = context['user_form'].cleaned_data
                 try:
                     with transaction.atomic():
-                        wereda_instance = context['wereda_form']
-                        address_instance = context['startup_address'].cleaned_data
-                        description_instance = context['startup_description'].cleaned_data
-                        profile_instance = context['startup_profile'].cleaned_data
-                        startup_instance = context['mentor_form'].cleaned_data
-                        user_instance = context['user_form'].cleaned_data
-                        region= EthRegion.objects.get(region_name=context['region_form'].cleaned_data['region_name'])
-                        wereda = Wereda(wereda_name=context['wereda_form'].data['wereda_name'], regionId=region)
-                        # wereda.save()
-                        
-                        def checkSector():
-                            if description_instance['sector'] == 'Other':
-                                return request.POST['other__sector']
-                            else:
-                                return ''
-                        print(description_instance['sector'])
-
-                        description = Description(name=description_instance['name'],
-                                                description=description_instance['description'],
-                                                sector=description_instance['sector'],
-                                                logo=description_instance['logo'],
-                                                other_sector=checkSector(),)
-                        # description.save()
-                        address= Address(
-                            country='Ethiopia',
-                            location=wereda,
-                            phone_number=address_instance['phone_number'],
-                            city_name=address_instance['city_name'],
-                            website=address_instance['website'],
-                                        )
-                        # address.save()
-                        usero=User(username=user_instance['username'],
-                            email=user_instance['email'],
-                            is_active = False,
-                            first_name = user_instance['first_name'],
-                            last_name = user_instance['last_name']
-                            )
-                        usero.set_password(user_instance['password'])
-                        # usero.save()
-                        
-                        profile= Profile(
-                            middile_name=profile_instance['middile_name'],
-                            birth_date=profile_instance['birth_date'],
-                            user=usero,
-                            profile_pic=profile_instance['profile_pic'],
-                            contact=profile_instance['contact'],
-                            secondary_email=profile_instance['secondary_email'],
-                            gender=profile_instance['gender'],
-                            group=group
-                                        )
-                        # profile.save()
-                        startup = Startup(establishment_year=startup_instance['establishment_year'],
-                                        market_scope=startup_instance['market_scope'],
-                                        stage=startup_instance['stage'],
-                                        description=description,
-                                        address=address,
-                                        profile=profile
-                                        )
-                        # startup.save()
-                        
+                        saveIncubator(incubator_instance,
+                                   request,
+                                   incubator_description_instance,
+                                   address_instance,
+                                   user_instance,
+                                   profile_instance,
+                                   group)      
                 except DatabaseError as e:
                     print(e)
-               
                 return redirect("main:homepage")
-
             else:
-                return redirect ("main:homepage")
-            # return redirect ("main:homepage")
+                for field, errors in context['incubator_form'].errors.items():
+                     print("Error in field {}: {}".format(field, errors))
 
 def register(request):
     if request.method== 'POST':
-        # print(request.POST['Startup'])
+        context['incubator_form']= IncubatorsAccelatorsHubForm(request.POST, None)
+        context['incubator_description']= DescriptionIncubatorForm(request.POST, request.FILES)
+        context['mentor_form']= MentorForm(request.POST, None)
+        context['startup_form']= StartupForm(request.POST, None)
+        context['description']= DescriptionForm(request.POST, request.FILES)
+        context['region_form']= RegionForm(request.POST, None)
+        context['wereda_form']= WeredaForm(request.POST, None)
+        context['address']= AddressForm(request.POST, None)
+        context['user_form']= UserForm(request.POST, None)
+        context['profile']= ProfileForm(request.POST,request.FILES)        
         if request.POST['Startup'] == 'Startup':
-            saveStartupObject(request)
+            saveStartupObject(request,context)
         if request.POST['Startup'] == 'Mentor':
-            saveMentorObject(request)
+            saveMentorObject(request,context)
+        if request.POST['Startup'] == 'Incubator/Hub/Acclerator':
+            saveIncubatorObject(request,context)
         return redirect ("main:homepage")
     else:
         context['mentor_form']= MentorForm()
@@ -527,14 +594,13 @@ def register(request):
         context['donor_form']= DonerFunderForm()
         context['goveroment_form']= GovermentForm()
         context['startup_form']= StartupForm()
-        context['startup_description']= DescriptionForm()
-        context['startup_address']= AddressForm()
-        context['startup_profile']= ProfileForm()
+        context['description']= DescriptionForm()
+        context['address']= AddressForm()
+        context['profile']= ProfileForm()
         context['region_form']= RegionForm()
         context['wereda_form']= WeredaForm()
         context['user_form']= UserForm()
         return render (request,'startup_main/registration.html',context)
-         
 
 def logout_view(request):
     logout(request)
@@ -544,5 +610,3 @@ def logout_view(request):
 
 
 
-
-               

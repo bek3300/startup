@@ -6,6 +6,7 @@ GOVEROMENT_TYPE = (
     )
 
 INVESTMENT_TYPE = (
+    
         ('selection', 'selection',),
         ('finance', 'finance',),
         ('working_space', 'working space',),
@@ -13,12 +14,18 @@ INVESTMENT_TYPE = (
         ('other', 'other',),
     )
 
-
-STARTUP_STAGE = (
+LEVEL = (
         ('pre', 'Pre-Startup',),
         ('mid', 'Mid-Startup',),
         ('early', 'Early Trsction',),
-        ('market', 'In-Market',),
+        ('post', 'Post startup',),
+    )
+
+STARTUP_STAGE = (
+        ("pre", "Pre-Startup",),
+        ("mid", "Mid-Startup",),
+        ("early", "Early Trsction",),
+        ("market", "In-Market",),
     )
 PROGRAM_DURATION = (
         ('less_than_3_month', 'less than 3 month',),
@@ -26,7 +33,6 @@ PROGRAM_DURATION = (
         ('6_months_to_a_year', '6 months to a year',),
         ('1_year_to_two_years', '1 year to two years',),
         ('International', 'International',),
-         ('Other', 'Other',),
     )
 FUNDEDBY = (
         ('self_', 'self',),
@@ -106,6 +112,23 @@ SECTORS = [
         (iT, 'IT'),
         (Agriculture, 'Agriculture'),
         (Other, 'Other'),
+        
+    ]
+SECTORS2 = [
+        (Entertainment), ('Entertainment'),
+        (Energy), ( 'Energy'),
+        (Logistics), ( 'Logistics'),
+        (Construction), ( 'Construction'),
+        (Education), ( 'Education'),
+        (Health), ( 'Health'),
+        (Manufacturing), ( 'Manufacturing'),
+        (Cleaning), ( 'Cleaning'),
+        (Education), ( 'Education'),
+        (Finance), ( 'Finance'),
+        (Tourism), ( 'Tourism'),
+        (iT), ( 'IT'),
+        (Agriculture), ( 'Agriculture'),
+        (Other), ( 'Other'),
         
     ]
 selectr= "Please Select Region"

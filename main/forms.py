@@ -140,12 +140,17 @@ class DescriptionForm(ModelForm):
         widgets = {
         'description': forms.Textarea(attrs={'rows':5, 'cols':40}),            # 'roll': forms.NumberInput(attrs={'class': 'form-control'}),
         }
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     print(self)
-    #     self.fields['sector'].widget.attrs['onclick'] = 'alert("Hello, world!")';
- 
 
+class DescriptionIncubatorForm(ModelForm):
+    sector = forms.CharField(blank=False)
+    class Meta:
+        model = Description
+        fields = ['name','description','logo'] 
+        exclude = ['sector']
+        widgets = {
+        'description': forms.Textarea(attrs={'rows':5, 'cols':40}),            # 'roll': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+ 
 
 
 class StartupForm(ModelForm):
@@ -161,20 +166,33 @@ class MentorForm(ModelForm):
    
     class Meta:
         model = Mentor
-        fields = ['educational_level','educational_level_other', 
-                  'educational_background','educational_background_other',
-                   'mentor_area','mentor_area_other','airelated_expriance',
+        fields = ['educational_level', 
+                  'educational_background',
+                   'mentor_area','airelated_expriance',
                    'attachments' ]
        
-    
+from .models import *
 class IncubatorsAccelatorsHubForm(ModelForm):
-    level = forms.MultipleChoiceField(
-        widget=forms.SelectMultiple(multiple=False),
-        choices=[('red', 'Red'), ('blue', 'Blue'), ('green', 'Green')]
-    )
+    
     class Meta:
         model = IncubatorsAccelatorsHub
         fields = ['service', 'ownership', 'focusIndustry','level','funded_by','program_duration','attachments' ]
+    labels = {
+            "focusIndustry": "Rule Title",
+            "other_field": "Other Title"
+        }
+    level = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple(),
+        choices=LEVEL
+    )
+    focusIndustry = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple(),
+        choices=SECTORS
+    )
+    help_texts = {
+            'focusIndustry': "hold shift to select multiple",
+            'attachments': "hold shift to select multiple",
+        }
     
 class DonerFunderForm(ModelForm):
    

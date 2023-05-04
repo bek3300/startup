@@ -17,7 +17,7 @@
         </div>
         <div class="form-group col-md-3 d-none" id="other_lv">
           <label for="id_other_educational_level" class="form-label">
-            Specify Background<span class="asteriskField">*</span>
+            Specify Level<span class="asteriskField">*</span>
           </label>
           <input
             type="text"
@@ -49,7 +49,7 @@
           <div class="form-group col-md-3">
             {{ mentor_form.mentor_area|as_crispy_field }}
           </div>
-          <div class="form-group col-md-3 d-none">
+          <div class="form-group col-md-3 d-none" id="other_mentor">
             <label for="id_other_mentor_area" class="form-label">
               Specify Mentor Area<span class="asteriskField">*</span>
             </label>
@@ -83,7 +83,7 @@
           {{ user_form.first_name|as_crispy_field }}
         </div>
         <div class="form-group col-md-4 ">
-          {{ startup_profile.middile_name|as_crispy_field }}
+          {{ profile.middile_name|as_crispy_field }}
         </div>
         <div class="form-group col-md-4 ">
           {{ user_form.last_name|as_crispy_field }}
@@ -99,7 +99,7 @@
         </div>
         <div 
          class="form-group col-md-4 ">
-          {{ startup_profile.birth_date|as_crispy_field }}
+          {{ profile.birth_date|as_crispy_field }}
         </div>
       </div>
       <div class="row">
@@ -111,19 +111,19 @@
       </div>
       <div class="row">
         <div class="form-group col-md-3 ">
-          {{ startup_profile.profile_pic|as_crispy_field }}
+          {{ profile.profile_pic|as_crispy_field }}
         </div>
         <div
          class="form-group col-md-3 ">
-          {{ startup_profile.contact|as_crispy_field }}
+          {{ profile.contact|as_crispy_field }}
         </div>
         <div
          class="form-group col-md-3 ">
-          {{ startup_profile.secondary_email|as_crispy_field }}
+          {{ profile.secondary_email|as_crispy_field }}
         </div>
         <div
          class="form-group col-md-3 ">
-          {{ startup_profile.gender|as_crispy_field }}
+          {{ profile.gender|as_crispy_field }}
         </div>
       </div>
     </div>
@@ -160,6 +160,24 @@
             if (this.value !== "other") {
               $("#other_lv").addClass("d-none");
               $("#id_other_educational_level").prop("required", function () {
+                return false;
+              });
+            }
+          }) 
+
+
+          $("#id_mentor_area").on("change", function () {
+            console.log(this.value)
+            if (this.value === "other") {
+              $("#id_other_mentor_area").prop("required", function () {
+                return true;
+                
+              });
+              $("#other_mentor").removeClass("d-none");
+            }
+            if (this.value !== "other") {
+              $("#other_mentor").addClass("d-none");
+              $("#id_other_mentor_area").prop("required", function () {
                 return false;
               });
             }
