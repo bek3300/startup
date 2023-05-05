@@ -2,7 +2,7 @@
 GOVEROMENT_TYPE = (
         ('ministry_offices', 'Ministry offices',),
         ('universities', 'Universities',),
-        ('other', 'other',),
+        ('Other', 'Other',),
     )
 
 INVESTMENT_TYPE = (
@@ -11,7 +11,7 @@ INVESTMENT_TYPE = (
         ('finance', 'finance',),
         ('working_space', 'working space',),
         ('material', 'material',),
-        ('other', 'other',),
+        ('Other', 'Other',),
     )
 
 LEVEL = (
@@ -114,23 +114,7 @@ SECTORS = [
         (Other, 'Other'),
         
     ]
-SECTORS2 = [
-        (Entertainment), ('Entertainment'),
-        (Energy), ( 'Energy'),
-        (Logistics), ( 'Logistics'),
-        (Construction), ( 'Construction'),
-        (Education), ( 'Education'),
-        (Health), ( 'Health'),
-        (Manufacturing), ( 'Manufacturing'),
-        (Cleaning), ( 'Cleaning'),
-        (Education), ( 'Education'),
-        (Finance), ( 'Finance'),
-        (Tourism), ( 'Tourism'),
-        (iT), ( 'IT'),
-        (Agriculture), ( 'Agriculture'),
-        (Other), ( 'Other'),
-        
-    ]
+
 selectr= "Please Select Region"
 adissAbeba ='Addis Ababa'
 afar ='Afar'

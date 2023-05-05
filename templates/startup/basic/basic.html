@@ -42,14 +42,11 @@
 
   $(function () {
     var sec = document.querySelectorAll("[id='sec']");
-    
     for (var i = 0, length = sec.length; i < length; i++) {
       if(sec[i].dataset.sec=='incubator_'){
         $(sec[i].parentNode).addClass('d-none')
         $(sec[i].children[0].children[1]).prop('required',false);
-
       }
-      
       $("#"+sec[i].dataset.sec+ " select[name=sector]").on("change", function () {
         if (this.value === "Other") {
           $("#id_other_sector").prop("required", function () {

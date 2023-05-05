@@ -199,7 +199,10 @@ class DonerFunderForm(ModelForm):
     class Meta:
         model = DonorFunder
         fields = ['doner_type', 'doner_type_by_other', 'level','investment_type','investment_type_other','maxInvestRange' ]
-       
+    level = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple(),
+        choices=LEVEL
+    )
     
 
 class GovermentForm(ModelForm):
@@ -208,4 +211,7 @@ class GovermentForm(ModelForm):
         model = Goveroment
         fields = ['goveroment_type', 'level' ]
        
-    
+    level = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple(),
+        choices=LEVEL
+    )

@@ -6,37 +6,46 @@
     <form id="donor_" method="post" enctype="multipart/form-data">
      
       {% csrf_token %}
-      <input hidden name="Donor" value="Donor/Funder">
+      <input hidden name="Startup" value="Funder/Donor">
       <div id="basicsDonor/Funder">
         <h4 style="color: #226470;" style="color: #226470;">Donor/Funder Basics</h4>
-      <div class="row">
-        <div class="form-group col-md-4 ">
-          {{ description.name|as_crispy_field }}
-        </div>
-        <div class="form-group col-md-4 ">
-          {{ description.sector|as_crispy_field }}
-        </div>
-        
-      </div>
-      <div class="row">
-        <div class="form-group col-md-4 ">
-            {{ description.description|as_crispy_field }}
-        </div>
-        <div class="form-group col-md-4 ">
-          {{ description.logo|as_crispy_field }}
-        </div>
-      </div>
+        {% include "./basic/basic.html" with typeOff="donor_"  %}
+
 
       <div class="row">
         
         <div class="form-group col-md-4">
           {{ donor_form.doner_type|as_crispy_field }}
         </div>
+        <div class="form-group col-md-2 d-none" id="other_doner_type">
+          <label for="id_other_doner_type" class="form-label">
+            Specify Donor<span class="asteriskField">*</span>
+          </label>
+          <input
+            type="text"
+            name="other__doner_type"
+            maxlength="30"
+            class="textinput form-control"
+            id="id_other_doner_type"
+          />
+        </div>
         <div class="form-group col-md-4">
           {{ donor_form.level|as_crispy_field }}
         </div>
         <div class="form-group col-md-4">
           {{ donor_form.investment_type|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-2 d-none" id="other_investment_type">
+          <label for="id_other_investment_type" class="form-label">
+            Specify Investment<span class="asteriskField">*</span>
+          </label>
+          <input
+            type="text"
+            name="other__investment_type"
+            maxlength="30"
+            class="textinput form-control"
+            id="id_other_investment_type"
+          />
         </div>
         <div class="form-group col-md-4">
           {{ donor_form.maxInvestRange|as_crispy_field }}
@@ -53,55 +62,43 @@
       </div>
       <div id="basicsResponsible">
         <h4>Responsible Person</h4>
-      <div class="row">
-        <div class="form-group col-md-4 ">
-          {{ user_form.first_name|as_crispy_field }}
-        </div>
-        <div class="form-group col-md-4 ">
-          {{ profile.middile_name|as_crispy_field }}
-        </div>
-        <div class="form-group col-md-4 ">
-          {{ user_form.last_name|as_crispy_field }}
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-4 ">
-          {{ user_form.username|as_crispy_field }}
-        </div>
-        <div
-         class="form-group col-md-4 ">
-          {{ user_form.email|as_crispy_field }}
-        </div>
-        <div 
-         class="form-group col-md-4 ">
-          {{ profile.birth_date|as_crispy_field }}
-        </div>
-      </div>
-      <div class="row">
-        <div 
-        class="form-group col-md-4 ">
-         {{ user_form.password|as_crispy_field }}
-       </div>
-   
-      </div>
-      <div class="row">
-        <div class="form-group col-md-3 ">
-          {{ profile.profile_pic|as_crispy_field }}
-        </div>
-        <div
-         class="form-group col-md-3 ">
-          {{ profile.contact|as_crispy_field }}
-        </div>
-        <div
-         class="form-group col-md-3 ">
-          {{ profile.secondary_email|as_crispy_field }}
-        </div>
-        <div
-         class="form-group col-md-3 ">
-          {{ profile.gender|as_crispy_field }}
-        </div>
-      </div>
+        {% include "./basic/person.html"  %}
     </div>
       <button type="submit" class="btn btn-primary">Register</button>
     </form>
 
+    <script>
+      $("#id_doner_type").on("change", function () {
+        console.log(this.value)
+        if (this.value === "Other") {
+          $("#id_other_doner_type").prop("required", function () {
+            return true;
+            
+          });
+          $("#other_doner_type").removeClass("d-none");
+        }
+        if (this.value !== "Other") {
+          $("#other_doner_type").addClass("d-none");
+          $("#id_other_doner_type").prop("required", function () {
+            return false;
+          });
+        }
+      })
+      $("#id_investment_type").on("change", function () {
+        console.log(this.value)
+        if (this.value === "Other") {
+          $("#id_other_investment_type").prop("required", function () {
+            return true;
+            
+          });
+          $("#other_investment_type").removeClass("d-none");
+        }
+        if (this.value !== "Other") {
+          $("#other_investment_type").addClass("d-none");
+          $("#id_other_investment_type").prop("required", function () {
+            return false;
+          });
+        }
+      })
+    </script>
+    

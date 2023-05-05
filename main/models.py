@@ -207,30 +207,27 @@ class IncubatorsAccelatorsHub(models.Model):
 
 
 class DonorFunder(models.Model):
- 
     doner_type = models.CharField(
         verbose_name = 'Donor Type',
         max_length=50,
         choices=FUNDEDBY,
         blank=False,null=False
     )
-   
     doner_type_by_other = models.CharField(
-        max_length=50,blank=False,null=False)
+        max_length=50,blank=True,null=True)
     address = models.OneToOneField(Address, on_delete=models.DO_NOTHING,blank=False,null=False,related_name='donor_address')
-    level = models.CharField(
-        verbose_name = 'Level',
-        max_length=50,
-        choices=STARTUP_STAGE,
-        blank=False,null=False
-    )
+    level = ArrayField(models.CharField(
+        max_length=500,
+        # choices=STARTUP_STAGE,
+        # read_only=False,
+    ),size=20,default=list)
     investment_type = models.CharField(
         verbose_name = 'Investment Type',
         max_length=50,
         choices=INVESTMENT_TYPE,
         blank=False,null=False
     )
-    investment_type_other = models.CharField(max_length=50,blank=False,null=False)
+    investment_type_other = models.CharField(max_length=50,blank=True,null=True)
     profile = models.OneToOneField(Profile, on_delete=models.DO_NOTHING,blank=False,null=False,related_name='donor_profile')
     description = models.OneToOneField(Description, on_delete=models.DO_NOTHING,blank=False,null=False,related_name='donor_description')
     maxInvestRange = models.CharField(verbose_name = 'Investment Range',
@@ -248,12 +245,11 @@ class Goveroment(models.Model):
     )
     goveroment_type_other = models.CharField(
         max_length=50,blank=False,null=False)
-    level = models.CharField(
-        verbose_name = 'Level',
-        max_length=50,
-        choices=STARTUP_STAGE,
-        blank=False,null=False
-    )
+    level = ArrayField(models.CharField(
+        max_length=500,
+        # choices=STARTUP_STAGE,
+        # read_only=False,
+    ),size=20,default=list)
     
     description = models.OneToOneField(Description, on_delete=models.DO_NOTHING,blank=False,null=False,related_name='goveroment_description')
     profile = models.OneToOneField(Profile, on_delete=models.DO_NOTHING,blank=False,null=False)
