@@ -16,6 +16,10 @@ from django.shortcuts import render,redirect
 from .forms import *
 from .view_logics import *
 from django.shortcuts import render, get_object_or_404
+import json
+from operator import or_
+from functools import reduce
+from django.views.decorators.csrf import csrf_exempt
 
 context = {}
 
@@ -169,7 +173,7 @@ def profile(request):
                 print(e)
             profile = Profile.objects.get(user=request.user)
             context['startup_form']= StartupForm(instance=Startup.objects.get(profile=profile))
-            context['description']= DescriptionForm(instance=Startup.objects.get(profile=profile).description)
+            context['startup_description']= DescriptionForm(instance=Startup.objects.get(profile=profile).description)
             context['region_form']= RegionEditForm(instance = EthRegion.objects.get(pk=Wereda.objects.get(pk=Startup.objects.get(profile=profile).address.location_id).regionId.id) )
             context['wereda_form']= WeredaForm(instance=Wereda.objects.get(pk=Startup.objects.get(profile=profile).address.location_id))
             context['address']= AddressForm(instance=Startup.objects.get(profile=profile).address)
@@ -306,26 +310,53 @@ def connect(request):
         print(e)
     return HttpResponse('users')
     # return render(request,'startup_main/startup.html', context)
-def startup(request):
-    if request.user.is_authenticated:
-        startups = Startup.objects.exclude(profile__user=request.user.id)
-        context['startups'] = startups
-        filters=[]
+from django.db.models import Q
+
+def networks(request,typeOf):
+    filters=[]
+    if(typeOf=='startup'):
         for field in Startup._meta.get_fields(include_parents=False):
             if isinstance(field, models.OneToOneField):
-            # if field.get_internal_type()=='OneToOneField':
-                
-                # for related_field? in field:
-                print(field)
-                pass
-            else:
-                filters.append(field.name)
-                context['filters'] = filters
-        return render(request,'startup_main/startup.html', context)
-    else:
-        startups = Startup.objects.all()
+                if field.name=='description':
+                        for f in field.related_model._meta.get_fields(include_parents=False):
+                            if( str(f.name) ==  'name' or str(f.name)=='sector'):
+                                filters.append(f.verbose_name)
+                if field.name=='address':
+                        for f in field.related_model._meta.get_fields(include_parents=False):
+                            if( str(f.name) ==  'location' ):
+                                filters.append('Address')
+                                        
+            else:  
+                if(not field.verbose_name ==  'ID'):
+                    filters.append(field.verbose_name)
+                    context['filters'] = filters    
+        startups = Startup.objects.filter(profile__user__is_active=True).exclude(profile__user=request.user.id)
         context['startups'] = startups
-        return render(request,'startup_main/startup.html', context)
+        if request.user.is_authenticated:
+            connectList = Connect.objects.filter(Q(to_user=request.user.id)|Q(from_user=request.user.id))
+            context['connectList']=connectList
+            return render(request,'startup_main/startup.html', context)
+        else:
+            connectList = Connect.objects.exclude(to_user=request.user.id,from_user=request.user.id)
+            startups = Startup.objects.filter(profile__user__is_active=True)
+            context['startups'] = startups
+            return render(request,'startup_main/startup.html', context)
+    if(typeOf=='mentor'):
+        if request.user.is_authenticated:
+            mentors = Mentor.objects.filter(profile__user__is_active=True).exclude(profile__user=request.user.id)
+            context['mentors'] = mentors
+            connectList = Connect.objects.filter(Q(to_user=request.user.id)|Q(from_user=request.user.id))
+            context['connectList']=connectList
+            # return render(request,'startup_main/startup.html', context)
+        else:
+            connectList = Connect.objects.exclude(to_user=request.user.id,from_user=request.user.id)
+            mentors = Mentor.objects.filter(profile__user__is_active=True)
+            context['mentors'] = mentors
+        return render(request,'startup_main/mentor.html', context)
+         
+         
+         
+    return render(request,'startup_main/startup.html', context)
 
 def register(request):
     if request.method== 'POST':
@@ -365,7 +396,115 @@ def register(request):
         context['wereda_form']= WeredaForm()
         context['user_form']= UserForm()
         return render (request,'startup_main/registration.html',context)
+    
 
+
+def getStartupFilter(request):
+    filterParams=json.loads(list(request.POST)[0])
+    if filterParams:
+        startup = Startup.objects.all()
+        for param in filterParams:
+            if param=='market_scope':
+                startup = startup.filter(market_scope__in = filterParams[param])
+            if param=='stage':
+                # print(filterParams[param])
+                startup = startup.filter(stage__in = filterParams[param])
+            if param=='daterange':
+                if filterParams[param]:
+                    startup =  startup.filter(establishment_year__gte=filterParams[param].split(' - ')[0],
+                                establishment_year__lte=filterParams[param].split(' - ')[1])
+            if param=='name':
+                query = reduce(or_, (Q(description__name__startswith=item) for item in filterParams[param]))
+                startup = startup.filter(query)
+            if param=='sector':
+                query = reduce(or_, (Q(description__sector__startswith=item) for item in filterParams[param]))
+                startup = startup.filter(query)
+            print(param)
+            if param == 'regionn':
+                 startup = startup.filter(address__location__regionId__region_name=filterParams[param])
+        context['startups'] = startup
+        return render(request,'startup_main/startup_filters.html',context)
+    else:
+        return render(request,'startup_main/startup_filters.html',context)
+    
+    # return context
+
+# sudo kill -9 `sudo lsof -t -i:9001`
+# 
+def filter(request,typeOf):
+    
+    if request.method== 'POST':
+        if typeOf=='startup':
+            filterParams=json.loads(list(request.POST)[0])
+            
+            if filterParams:
+                startup = Startup.objects.all()
+                print(filterParams)
+                for param in filterParams:
+                    if param=='market_scope':
+                        if filterParams[param]:
+                            startup = startup.filter(market_scope__in = filterParams[param])
+                            print('market_scope',startup)
+                    if param=='stage':
+                        if filterParams[param]:
+                            startup = startup.filter(stage__in = filterParams[param])
+                            print('stage',startup)
+                    if param=='daterange':
+                        if filterParams[param]:
+                            startup =  startup.filter(establishment_year__gte=filterParams[param].split(' - ')[0],
+                                        establishment_year__lte=filterParams[param].split(' - ')[1])
+                            print('date',startup)
+                    if param=='name':
+                        if filterParams[param]:
+                            query = reduce(or_, (Q(description__name__startswith=item) for item in filterParams[param]))
+                            startup = startup.filter(query)
+                            print('name',startup)
+                    if param=='sector':
+                        if filterParams[param]:
+                            query = reduce(or_, (Q(description__sector__startswith=item) for item in filterParams[param]))
+                            startup = startup.filter(query)
+                            print('sec',startup)
+                    if param == 'regionn':
+                        if filterParams[param]:
+                            startup = startup.filter(address__location__regionId__region_name=filterParams[param])
+                    if param == 'wereda':
+                        if filterParams[param]:
+                            startup = startup.filter(address__location__wereda_name=filterParams[param])
+                            print('region',startup)
+                    
+                context['startups'] = startup
+                        
+                    
+                return render(request,'startup_main/startup_filters.html',context)
+
+
+
+
+
+
+@csrf_exempt
+def getContent(request,typeOf):
+    if typeOf == 'startups':
+        #   print(typeOf)
+          context['startups'] = Startup.objects.filter(profile__user__is_active=True).exclude(profile__user=request.user.id) if request.user.is_authenticated else Startup.objects.filter(profile__user__is_active=True)
+          return  render(request,'startup_main/startup_content.html',context)
+    if typeOf == 'mentors':
+          print(typeOf)
+    if typeOf == 'incubators':
+          print(typeOf)
+    if typeOf == 'hubs':
+          print(typeOf)
+    if typeOf == 'acclerators':
+          print(typeOf)
+    if typeOf == 'doners':
+          print(typeOf)
+    if typeOf == 'funder':
+          print(typeOf)
+    if typeOf == 'government':
+          print(typeOf)
+    
+     
+    return render(request,'startup_main/startup_filters.html',context)
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse('main:login'))

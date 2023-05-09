@@ -3,7 +3,7 @@
     <header id="header" class="header fixed-top" data-scrollto-offset="0">
       <div class="container-fluid d-flex align-items-center justify-content-between">
   
-        <a href="/homepage/" class="logo d-flex align-items-center scrollto me-auto me-lg-0">
+        <a href="/" class="logo d-flex align-items-center scrollto me-auto me-lg-0">
           <!-- Uncomment the line below if you also wish to use an image logo -->
           <img src="{% static 'assets/img/AII-logo.png'%}" alt="">
           <h1><span></span>Start-Up</h1>
@@ -16,11 +16,11 @@
             <li><a class="nav-link scrollto" href="/#about">About</a></li>
             <li class="dropdown"><a href="#"><span>Network</span> <i class="bi bi-chevron-down"></i></a>
               <ul>
-                <li><a href="{% url 'main:startup' %}">Startups</a></li>
-                <li><a href="#">Mentors</a></li>
-                <li><a href="#">Incubators</a></li>
-                <li><a href="#">Investors</a></li>
-                <li><a href="#">Gov't Bodies</a></li>
+                <li><a href="{% url 'main:networks' 'startup' %}">Startups</a></li>
+                <li><a href="{% url 'main:networks' 'mentor' %}">Mentors</a></li>
+                <li><a href="{% url 'main:networks' 'incubator' %}">Incubators</a></li>
+                <li><a href="{% url 'main:networks' 'investor' %}">Investors</a></li>
+                <li><a href="{% url 'main:networks' 'government' %}">Gov't Bodies</a></li>
                 <li><a href="#">Disc. Forums</a></li>
               </ul>
             </li>

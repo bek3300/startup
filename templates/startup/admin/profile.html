@@ -29,19 +29,19 @@
     <h4 style="color: #226470;" style="color: #226470;">Startup Basics</h4>
   <div class="row">
     <div class="form-group col-md-6">
-      {{ startup_description.name|as_crispy_field }}
+      {{ description.name|as_crispy_field }}
     </div>
     <div class="form-group col-md-6">
-      {{ startup_description.sector|as_crispy_field }}
+      {{ description.sector|as_crispy_field }}
     </div>
     
   </div>
   <div class="row">
     <div class="form-group col-md-6 ">
-  {{ startup_description.description|as_crispy_field }}
+  {{ description.description|as_crispy_field }}
     </div>
     <div class="form-group col-md-6 ">
-      {{ startup_description.logo|as_crispy_field }}
+      {{ description.logo|as_crispy_field }}
     </div>
   </div>
   <div class="row">
@@ -70,17 +70,15 @@
     
   </div>
   <div class="row">
+   
     <div class="form-group col-md-3">
-      {{ startup_address.email|as_crispy_field }}
+      {{ address.phone_number|as_crispy_field }}
     </div>
     <div class="form-group col-md-3">
-      {{ startup_address.phone_number|as_crispy_field }}
+      {{ address.city_name|as_crispy_field }}
     </div>
     <div class="form-group col-md-3">
-      {{ startup_address.city_name|as_crispy_field }}
-    </div>
-    <div class="form-group col-md-3">
-      {{ startup_address.website|as_crispy_field }}
+      {{ address.website|as_crispy_field }}
     </div>
     
   </div>
@@ -95,7 +93,7 @@
       {{ user_form.first_name|as_crispy_field }}
     </div>
     <div class="form-group col-md-4 ">
-      {{ startup_profile.middile_name|as_crispy_field }}
+      {{ profile.middile_name|as_crispy_field }}
     </div>
     <div class="form-group col-md-4 ">
       {{ user_form.last_name|as_crispy_field }}
@@ -111,25 +109,25 @@
     </div>
     <div 
      class="form-group col-md-4 ">
-      {{ startup_profile.birth_date|as_crispy_field }}
+      {{ profile.birth_date|as_crispy_field }}
     </div>
   </div>
 
   <div class="row">
     <div class="form-group col-md-5 ">
-      {{ startup_profile.profile_pic|as_crispy_field }}
+      {{ profile.profile_pic|as_crispy_field }}
     </div>
     <div
      class="form-group col-md-3 ">
-      {{ startup_profile.contact|as_crispy_field }}
+      {{ profile.contact|as_crispy_field }}
     </div>
     <div
      class="form-group col-md-3 ">
-      {{ startup_profile.secondary_email|as_crispy_field }}
+      {{ profile.secondary_email|as_crispy_field }}
     </div>
     <div
      class="form-group col-md-3 ">
-      {{ startup_profile.gender|as_crispy_field }}
+      {{ profile.gender|as_crispy_field }}
     </div>
   </div>
   <button type="submit" class="btn btn-primary">Sign in</button>

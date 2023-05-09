@@ -2444,6 +2444,9 @@ section {
 /*--------------------------------------------------------------
 # Blog Home Posts List
 --------------------------------------------------------------*/
+.blog {
+  font-family: var(--font-secondary);
+}
 .blog .posts-list article {
   box-shadow: 0 4px 16px rgba(var(--color-black-rgb), 0.1);
   padding: 30px;

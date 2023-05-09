@@ -9,7 +9,7 @@ from django.contrib.postgres.fields import ArrayField
 
 class EthRegion(models.Model):
      region_name = models.CharField(
-         verbose_name = 'Region Name',
+         verbose_name = 'Region',
         max_length=50,
         choices=Regions,
         blank=False,
@@ -23,7 +23,7 @@ class EthRegion(models.Model):
 class Wereda(models.Model):
     regionId = models.ForeignKey(EthRegion,blank=False,null=False,on_delete=models.CASCADE,verbose_name='Region',default=1,related_name='wereda')
     wereda_name = models.CharField(max_length=30, 
-                                   verbose_name = 'Wereda Name',
+                                   verbose_name = 'Wereda',
                                    blank=False,null=False)
     def __str__(self):
         return self.wereda_name
@@ -260,6 +260,29 @@ class Connect(models.Model):
     to_user = models.ForeignKey(User, related_name='to_user', on_delete=models.CASCADE,)
     from_user = models.ForeignKey(User, related_name='from_user', on_delete=models.CASCADE,)
     timestamp = models.DateTimeField(auto_now_add=True)
-    is_accepted = models.BooleanField(default=False)
+    STATUS_CHOICES = (
+        (1, 'Pending'),
+        (2, 'Accepted'),
+        (3, 'Rejected'),
+    )
+    # store this as an integer, Django handles the verbose choice options
+    status = models.IntegerField(choices=STATUS_CHOICES, default=1)
     def __str__(self):
         return "From {}, to {}".format(self.from_user.username, self.to_user.username)
+    @staticmethod
+    def connects(user):
+        connects = []
+        for _ in Connect.objects.filter(to_user=user, status=1):
+            connects.append({"username": _.friend.username, "gravatar": _.friend.avatar})
+        for _ in Connect.objects.filter(friend=user, status=1):
+            connects.append({"username": _.user.username, "gravatar": _.user.avatar})
+
+        return connects
+
+    @staticmethod
+    def pending_requests(user):
+        requests = []
+        for _ in Connect.objects.filter(friend=user, status=0):
+            requests.append({"username": _.user.username, "gravatar": _.user.avatar})
+
+        return requests
