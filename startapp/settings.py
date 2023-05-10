@@ -31,9 +31,11 @@ ALLOWED_HOSTS = []
 # Application definition
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+ASGI_APPLICATION = "startapp.asgi.application"
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -48,6 +50,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     "crispy_bootstrap5",
     'multiselectfield',
+    'channels',
+    
     # 'django_messages',
 
 ]
@@ -95,6 +99,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'startapp.wsgi.application'
+# ASGI_APPLICATION = 'startapp.routing.application'
 
 
 # Database

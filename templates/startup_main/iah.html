@@ -1,11 +1,6 @@
 {% extends './base.html' %} 
 {% block content %} {% load static %} 
-{% include './header.html' %} {% comment %}
-<script
-  type="text/javascript"
-  src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"
-></script>
-{% endcomment %}
+{% include './header.html' %} 
 <script
   type="text/javascript"
   src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"
@@ -107,213 +102,95 @@
                   <div class="accordion-body">
                     <ul>
                       
-                      {%if filter == 'Educational Level' %}
+                      {%if filter == 'Service' %}
                       <div class="form-check form-check-inline">
                         <input
                           class="form-check-input"
                           type="checkbox"
-                          id="No formal education"
-                          value="No formal education"
-                          name='educational_level'
+                          id="Acceleration"
+                          value="Acceleration"
+                          name='service'
                         />
-                        <label class="form-check-label" for="No formal education"
-                          >No formal education</label
+                        <label class="form-check-label" for="Acceleration"
+                          >Acceleration</label
                         >
                       </div>
                       <div class="form-check form-check-inline">
                         <input
                           class="form-check-input"
                           type="checkbox"
-                          id="Primary education"
-                          value="Primary education"
-                          name='educational_level'
+                          id="Incubation"
+                          value="Incubation"
+                          name='service'
                         />
-                        <label class="form-check-label" for="Primary education"
-                          >Primary education</label
+                        <label class="form-check-label" for="Incubation"
+                          >Incubation</label
                         >
                       </div>
                       <div class="form-check form-check-inline">
                         <input
                           class="form-check-input"
                           type="checkbox"
-                          id="Secondary education or high school"
-                          value="Secondary education or high school"
-                          name='educational_level'
+                          id="Hub"
+                          value="Hub"
+                          name='service'
                         />
-                        <label class="form-check-label" for="Secondary education or high school"
-                          >Secondary education or high school</label
+                        <label class="form-check-label" for="Hub"
+                          >Hub</label
                         >
                       </div>
-                      <div class="form-check form-check-inline">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="Vocational qualification"
-                          value="Vocational qualification"
-                          name='educational_level'
-                        />
-                        <label class="form-check-label" for="Vocational qualification"
-                          >Vocational qualification</label
-                        >
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="Bachelors degree"
-                          value="Bachelors degree"
-                          name='educational_level'
-                        />
-                        <label class="form-check-label" for="Bachelors degree"
-                          >Bachelors degree</label
-                        >
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="Masters degree"
-                          value="Masters degree"
-                          name='educational_level'
-                        />
-                        <label class="form-check-label" for="Masters degree"
-                          >Masters degree</label
-                        >
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="Doctorate or higher"
-                          value="Doctorate or higher"
-                          name='educational_level'
-                        />
-                        <label class="form-check-label" for="Doctorate or higher"
-                          >Doctorate or higher</label
-                        >
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="Other"
-                          value="Other"
-                          name='educational_level'
-                        />
-                        <label class="form-check-label" for="Other"
-                          >Other</label
-                        >
-                      </div>
+                   
                       {%endif%} 
 
 
-                      {%if filter == 'Educational Background' %}
+                      {%if filter == 'Owner Ship' %}
                       <div class="form-check form-check-inline">
                         <input
                           class="form-check-input"
                           type="checkbox"
-                          id="Arts and humanities"
-                          value="arts_and_humanities"
-                          name='educational_background'
+                          id="Private"
+                          value="Private"
+                          name='ownership'
                         />
-                        <label class="form-check-label" for="Arts and humanities"
-                          >Arts and humanities</label
+                        <label class="form-check-label" for="Private"
+                          >Private</label
                         >
                       </div>
                       <div class="form-check form-check-inline">
                         <input
                           class="form-check-input"
                           type="checkbox"
-                          id="Business and management"
-                          value="business_and_management"
-                          name='educational_background'
+                          id="NGO"
+                          value="NGO"
+                          name='ownership'
                         />
-                        <label class="form-check-label" for="Business and management"
-                          >Business and management</label
+                        <label class="form-check-label" for="NGO"
+                          >NGO</label
                         >
-                      </div> 
+                      </div>
+                    
                       <div class="form-check form-check-inline">
                         <input
                           class="form-check-input"
                           type="checkbox"
-                          id="Computer science"
-                          value="computer_science"
-                          name='educational_background'
+                          id="Public"
+                          value="Public"
+                          name='ownership'
                         />
-                        <label class="form-check-label" for="Computer science"
-                          >Computer science</label
+                        <label class="form-check-label" for="Public"
+                          >Public</label
                         >
                       </div>
                       <div class="form-check form-check-inline">
                         <input
                           class="form-check-input"
                           type="checkbox"
-                          id="Education"
-                          value="education"
-                          name='educational_background'
+                          id="Government"
+                          value="Government"
+                          name='ownership'
                         />
-                        <label class="form-check-label" for="Education"
-                          >Education</label
-                        >
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="Engineering"
-                          value="engineering"
-                          name='educational_background'
-                        />
-                        <label class="form-check-label" for="Engineering"
-                          >Engineering</label
-                        >
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="Health"
-                          value="health"
-                          name='educational_background'
-                        />
-                        <label class="form-check-label" for="Health"
-                          >Health</label
-                        >
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="Law"
-                          value="law"
-                          name='educational_background'
-                        />
-                        <label class="form-check-label" for="Law"
-                          >Law</label
-                        >
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="Social sciences"
-                          value="social_sciences"
-                          name='educational_background'
-                        />
-                        <label class="form-check-label" for="Social sciences"
-                          >Social sciences</label
-                        >
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="Natural sciences"
-                          value="natural_sciences"
-                          name='educational_background'
-                        />
-                        <label class="form-check-label" for="Natural sciences"
-                          >Natural sciences</label
+                        <label class="form-check-label" for="Government"
+                          >Government</label
                         >
                       </div>
                       <div class="form-check form-check-inline">
@@ -322,82 +199,68 @@
                           type="checkbox"
                           id="Other"
                           value="Other"
-                          name='educational_background'
+                          name='ownership'
                         />
                         <label class="form-check-label" for="Other"
                           >Other</label
                         >
                       </div>
+                     
                       {%endif%}
-                      {%if filter == 'Mentor Area' %}
-                      <div class="form-check form-check-inline">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="legal advice"
-                          value="legal_advice"
-                          name='mentor_area'
-                        />
-                        <label class="form-check-label" for="legal advice"
-                          >legal advice</label
-                        >
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="business model"
-                          value="business_model"
-                          name='mentor_area'
-                        />
-                        <label class="form-check-label" for="business model"
-                          >business model</label
-                        >
-                      </div> 
-                      <div class="form-check form-check-inline">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="innovation management"
-                          value="innovation_management"
-                          name='mentor_area'
-                        />
-                        <label class="form-check-label" for="innovation management"
-                          >innovation management</label
-                        >
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="intellectual property"
-                          value="intellectual_property"
-                          name='mentor_area'
-                        />
-                        <label class="form-check-label" for="intellectual property"
-                          >intellectual property</label
-                        >
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="Other"
-                          value="Other"
-                          name='mentor_area'
-                        />
-                        <label class="form-check-label" for="Other"
-                          >Other</label
-                        >
-                      </div>
-                      {% endif %}
+                   
 
 
-                      {%if filter == 'AI Related Experience' %}
-                      <div class="form-check form-switch">
-                        <input class="form-check-input" name="airelated_expriance" type="checkbox" id="airelated_expriance" >
-                        <label class="form-check-label" for="airelated_expriance">yes</label>
+                      {%if filter == 'Level' %}
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="Pre-Startup"
+                          value="pre"
+                          name='level'
+                        />
+                        <label class="form-check-label" for="Pre-Startup"
+                          >Pre-Startup</label
+                        >
                       </div>
+
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="Mid-Startup"
+                          value="mid"
+                          name='level'
+                        />
+                        <label class="form-check-label" for="Mid-Startup"
+                          >Mid-Startup</label
+                        >
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="Early Trsction"
+                          value="early"
+                          name='level'
+                        />
+                        <label class="form-check-label" for="Early Trsction"
+                          >Early Trsction</label
+                        >
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="In-Market"
+                          value="post"
+                          name='level'
+                        />
+                        <label class="form-check-label" for="In-Market"
+                          >In-Market</label
+                        >
+                      </div>
+                    
                       {% endif %}
                      {%if filter == 'Name' %}
                       <li>
@@ -413,6 +276,130 @@
                           });
                         </script>
                       </li>
+                      {%endif%}
+                      {%if filter == 'Program Duration' %}
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="less than 3 month"
+                          value="less_than_3_month"
+                          name='program_duration'
+                        />
+                        <label class="form-check-label" for="less than 3 month"
+                          >less than 3 month</label
+                        >
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="3_to_6_months"
+                          value="3_to_6_months"
+                          name='program_duration'
+                        />
+                        <label class="form-check-label" for="3_to_6_months"
+                          >3 to 6 months</label
+                        >
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="6_months_to_a_year"
+                          value="less_than_3_month"
+                          name='program_duration'
+                        />
+                        <label class="form-check-label" for="6_months_to_a_year"
+                          >6 months to a year</label
+                        >
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="1_year_to_two_years"
+                          value="1_year_to_two_years"
+                          name='program_duration'
+                        />
+                        <label class="form-check-label" for="1_year_to_two_years"
+                          >1 year to two years</label
+                        >
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="International"
+                          value="International"
+                          name='program_duration'
+                        />
+                        <label class="form-check-label" for="International"
+                          >International</label
+                        >
+                      </div>
+                      {%endif%}
+                      {%if filter == 'Funded By' %}
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="self"
+                          value="self_"
+                          name='funded_by'
+                        />
+                        <label class="form-check-label" for="self"
+                          >self</label
+                        >
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="NGO"
+                          value="nGO"
+                          name='funded_by'
+                        />
+                        <label class="form-check-label" for="NGO"
+                          >NGO</label
+                        >
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="Grant"
+                          value="grant"
+                          name='funded_by'
+                        />
+                        <label class="form-check-label" for="Grant"
+                          >Grant</label
+                        >
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="International"
+                          value="International"
+                          name='funded_by'
+                        />
+                        <label class="form-check-label" for="International"
+                          >International</label
+                        >
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="Other"
+                          value="Other"
+                          name='funded_by'
+                        />
+                        <label class="form-check-label" for="Other"
+                          >Other</label
+                        >
+                      </div>
                       {%endif%}
                       {%if filter == 'Sector' %}
                       <div class="form-check form-check-inline">
@@ -626,10 +613,7 @@
                           ).val('');
                         });
                       </script>
-                      {% comment %}
-                      <li><a href="#">List one</a></li>
-                      <li><a href="#">List one</a></li>
-                      {% endcomment %}
+                      
                     </ul>
                   </div>
                 </div>
@@ -666,7 +650,7 @@
                 console.log(obj);
               $.ajax({
                   headers: { "X-CSRFToken": csrfmiddlewaretoken },
-                  url: '{% url "main:filter" "mentor" %}',
+                  url: '{% url "main:filter" "iah" %}',
                   data: JSON.stringify(obj),
                   dataType: 'html',
                   type: "POST",
@@ -690,20 +674,20 @@
 
       <div class="col-lg-9" >
         <div class="row gy-12 posts-list" id="to_replaced">
-          {% for mentor in mentors %}
+          {% for iah_ in iah %}
           <div class="col-lg-4">
             <article class="d-flex flex-column">
               <h2 class="title">
                 <img
-                  src="{{mentor.profile.profile_pic.url}}"
+                  src="{{iah_.profile.profile_pic.url}}"
                   alt=""
                   style="max-width: 50px"
                 />&nbsp;
-                <a href="blog-details.html">{{mentor.description.name}}</a>
+                <a href="blog-details.html">{{iah_.description.name}}</a>
               </h2>
 
               <div class="content">
-                <p>{{mentor.description.description}}</p>
+                <p>{{iah_.description.description}}</p>
               </div>
 
               <div

@@ -29,7 +29,7 @@ STARTUP_STAGE = (
     )
 PROGRAM_DURATION = (
         ('less_than_3_month', 'less than 3 month',),
-        ('3_to_6 months', '3 to 6 months',),
+        ('3_to_6_months', '3 to 6 months',),
         ('6_months_to_a_year', '6 months to a year',),
         ('1_year_to_two_years', '1 year to two years',),
         ('International', 'International',),
@@ -49,7 +49,7 @@ Government = 'Government'
 Other = 'Other'
 OWNERSHIP = [
         (Private, 'Private'),
-        (Public, 'Incubation'),
+        (Public, 'Public'),
         (nGO, 'NGO'),
         (Government, 'Government'),
         (Other, 'Other'),

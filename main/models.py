@@ -146,7 +146,7 @@ class Mentor(models.Model):
         max_length=50,blank=True,null=True)
     airelated_expriance = models.CharField(
         verbose_name = 'AI Related Experience',
-        max_length=50,blank=False,null=False)
+        max_length=50,blank=True,null=True)
     attachments = models.FileField(
         verbose_name = 'Attachment',
         upload_to='mentor/attachments',blank=True,null=True, help_text="please upload relevant documents max 10")
@@ -177,8 +177,9 @@ class IncubatorsAccelatorsHub(models.Model):
     description = models.OneToOneField(Description, on_delete=models.DO_NOTHING,blank=False,null=False,related_name='iha_description')
     
     focusIndustry = ArrayField(models.CharField(
+        
         # choices=SECTORS,
-        max_length=500),default=list
+        max_length=500),default=list,verbose_name='Focus Industry',
         )
     
 
@@ -186,7 +187,7 @@ class IncubatorsAccelatorsHub(models.Model):
         max_length=500,
         # choices=STARTUP_STAGE,
         # read_only=False,
-    ),size=20,default=list)
+    ),size=20,default=list,verbose_name='Level',)
     funded_by = models.CharField(
         verbose_name = 'Funded By',
         max_length=50,

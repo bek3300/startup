@@ -342,21 +342,57 @@ def networks(request,typeOf):
             context['startups'] = startups
             return render(request,'startup_main/startup.html', context)
     if(typeOf=='mentor'):
+        for field in Mentor._meta.get_fields(include_parents=False):
+            if isinstance(field, models.OneToOneField):
+                if field.name=='description':
+                        for f in field.related_model._meta.get_fields(include_parents=False):
+                            if( str(f.name) ==  'name' or str(f.name)=='sector'):
+                                filters.append(f.verbose_name)
+                if field.name=='address':
+                        for f in field.related_model._meta.get_fields(include_parents=False):
+                            if( str(f.name) ==  'location' ):
+                                filters.append('Address')                      
+            else:  
+                if(not field.verbose_name ==  'ID' and not field.name == 'educational_level_other' and not field.name == 'educational_background_other' and not field.name == "mentor_area_other" and not field.name == "attachments"):
+                    filters.append(field.verbose_name)
+                    context['filters'] = filters  
         if request.user.is_authenticated:
             mentors = Mentor.objects.filter(profile__user__is_active=True).exclude(profile__user=request.user.id)
             context['mentors'] = mentors
             connectList = Connect.objects.filter(Q(to_user=request.user.id)|Q(from_user=request.user.id))
             context['connectList']=connectList
-            # return render(request,'startup_main/startup.html', context)
+            return render(request,'startup_main/mentor.html', context)
         else:
             connectList = Connect.objects.exclude(to_user=request.user.id,from_user=request.user.id)
             mentors = Mentor.objects.filter(profile__user__is_active=True)
             context['mentors'] = mentors
         return render(request,'startup_main/mentor.html', context)
-         
-         
-         
-    return render(request,'startup_main/startup.html', context)
+    if(typeOf=='incubator'):
+        for field in IncubatorsAccelatorsHub._meta.get_fields(include_parents=False):
+            if isinstance(field, models.OneToOneField):
+                if field.name=='description':
+                        for f in field.related_model._meta.get_fields(include_parents=False):
+                            if( str(f.name) ==  'name' or str(f.name)=='sector'):
+                                filters.append(f.verbose_name)
+                if field.name=='address':
+                        for f in field.related_model._meta.get_fields(include_parents=False):
+                            if( str(f.name) ==  'location' ):
+                                filters.append('Address')                      
+            else:  
+                if(not field.verbose_name ==  'ID' and not field.name == 'ownership_other' and not field.name == 'funded_by_other'   and not field.name == "attachments" and not field.name == "focusIndustry"):
+                    filters.append(field.verbose_name)
+                    context['filters'] = filters
+        if request.user.is_authenticated:
+            iah = IncubatorsAccelatorsHub.objects.filter(profile__user__is_active=True).exclude(profile__user=request.user.id)
+            context['iah'] = iah
+            connectList = Connect.objects.filter(Q(to_user=request.user.id)|Q(from_user=request.user.id))
+            context['connectList']=connectList
+            return render(request,'startup_main/mentor.html', context)
+        else:
+            connectList = Connect.objects.exclude(to_user=request.user.id,from_user=request.user.id)
+            iah = IncubatorsAccelatorsHub.objects.filter(profile__user__is_active=True)
+            context['iah'] = iah  
+        return render(request,'startup_main/iah.html', context)
 
 def register(request):
     if request.method== 'POST':
@@ -397,85 +433,122 @@ def register(request):
         context['user_form']= UserForm()
         return render (request,'startup_main/registration.html',context)
     
-
-
-def getStartupFilter(request):
-    filterParams=json.loads(list(request.POST)[0])
-    if filterParams:
-        startup = Startup.objects.all()
-        for param in filterParams:
-            if param=='market_scope':
-                startup = startup.filter(market_scope__in = filterParams[param])
-            if param=='stage':
-                # print(filterParams[param])
-                startup = startup.filter(stage__in = filterParams[param])
-            if param=='daterange':
-                if filterParams[param]:
-                    startup =  startup.filter(establishment_year__gte=filterParams[param].split(' - ')[0],
-                                establishment_year__lte=filterParams[param].split(' - ')[1])
-            if param=='name':
-                query = reduce(or_, (Q(description__name__startswith=item) for item in filterParams[param]))
-                startup = startup.filter(query)
-            if param=='sector':
-                query = reduce(or_, (Q(description__sector__startswith=item) for item in filterParams[param]))
-                startup = startup.filter(query)
-            print(param)
-            if param == 'regionn':
-                 startup = startup.filter(address__location__regionId__region_name=filterParams[param])
-        context['startups'] = startup
-        return render(request,'startup_main/startup_filters.html',context)
-    else:
-        return render(request,'startup_main/startup_filters.html',context)
-    
-    # return context
-
 # sudo kill -9 `sudo lsof -t -i:9001`
 # 
 def filter(request,typeOf):
-    
     if request.method== 'POST':
         if typeOf=='startup':
             filterParams=json.loads(list(request.POST)[0])
-            
             if filterParams:
                 startup = Startup.objects.all()
-                print(filterParams)
                 for param in filterParams:
                     if param=='market_scope':
                         if filterParams[param]:
-                            startup = startup.filter(market_scope__in = filterParams[param])
-                            print('market_scope',startup)
+                            startup = startup.filter(market_scope__in = filterParams[param])     
                     if param=='stage':
                         if filterParams[param]:
-                            startup = startup.filter(stage__in = filterParams[param])
-                            print('stage',startup)
+                            startup = startup.filter(stage__in = filterParams[param]) 
                     if param=='daterange':
                         if filterParams[param]:
                             startup =  startup.filter(establishment_year__gte=filterParams[param].split(' - ')[0],
-                                        establishment_year__lte=filterParams[param].split(' - ')[1])
-                            print('date',startup)
+                                        establishment_year__lte=filterParams[param].split(' - ')[1])  
                     if param=='name':
                         if filterParams[param]:
                             query = reduce(or_, (Q(description__name__startswith=item) for item in filterParams[param]))
-                            startup = startup.filter(query)
-                            print('name',startup)
+                            startup = startup.filter(query)       
                     if param=='sector':
                         if filterParams[param]:
                             query = reduce(or_, (Q(description__sector__startswith=item) for item in filterParams[param]))
-                            startup = startup.filter(query)
-                            print('sec',startup)
+                            startup = startup.filter(query) 
                     if param == 'regionn':
                         if filterParams[param]:
                             startup = startup.filter(address__location__regionId__region_name=filterParams[param])
                     if param == 'wereda':
                         if filterParams[param]:
                             startup = startup.filter(address__location__wereda_name=filterParams[param])
-                            print('region',startup)
-                    
                 context['startups'] = startup
-                        
-                    
                 return render(request,'startup_main/startup_filters.html',context)
+        if typeOf=='mentor':
+            filterParams=json.loads(list(request.POST)[0])
+            if filterParams:
+                mentor = Mentor.objects.all()
+                for param in filterParams:
+                    if param=='educational_level':
+                        if filterParams[param]:
+                            mentor = mentor.filter(educational_level__in = filterParams[param])     
+                    if param=='educational_background':
+                        if filterParams[param]:
+                            mentor = mentor.filter(educational_background__in = filterParams[param]) 
+                    if param=='mentor_area':
+                        if filterParams[param]:
+                            mentor = mentor.filter(mentor_area__in = filterParams[param])
+                    if param=='name':
+                        if filterParams[param]:
+                            query = reduce(or_, (Q(description__name__startswith=item) for item in filterParams[param]))
+                            mentor = mentor.filter(query)       
+                    if param=='sector':
+                        if filterParams[param]:
+                            query = reduce(or_, (Q(description__sector__startswith=item) for item in filterParams[param]))
+                            mentor = mentor.filter(query) 
+                    if param=='airelated_expriance':
+                        if filterParams[param]:
+                            # query = reduce(or_, (Q(description__sector__startswith=item) for item in filterParams[param]))
+                            mentor = mentor.filter(airelated_expriance=not None) 
+                    if param == 'regionn':
+                        if filterParams[param]:
+                            mentor = mentor.filter(address__location__regionId__region_name=filterParams[param])
+                    if param == 'wereda':
+                        if filterParams[param]:
+                            mentor = mentor.filter(address__location__wereda_name=filterParams[param])
+                context['mentors'] = mentor
+                return render(request,'startup_main/mentor_filters.html',context)
+        if typeOf=='iah':
+            filterParams=json.loads(list(request.POST)[0])
+            print(filterParams)
+            if filterParams:
+                iah = IncubatorsAccelatorsHub.objects.all()
+                for param in filterParams:
+                    if param=='service':
+                        if filterParams[param]:
+                            query = reduce(or_, (Q(service__in=item) for item in filterParams[param]))
+                            iah = iah.filter(query)
+                            print(iah)     
+                    if param=='ownership':
+                        if filterParams[param]:
+                            query = reduce(or_, (Q(ownership__in=item) for item in filterParams[param]))
+                            iah = iah.filter(query) 
+                    if param=='level':
+                        if filterParams[param]:
+                            query = reduce(or_, (Q(level__in=item) for item in filterParams[param]))
+                            iah = iah.filter(query)
+                    if param=='name':
+                        if filterParams[param]:
+                            query = reduce(or_, (Q(description__name__startswith=item) for item in filterParams[param]))
+                            iah = iah.filter(query)       
+                    if param=='sector':
+                        if filterParams[param]:
+                            query = reduce(or_, (Q(description__sector__startswith=item) for item in filterParams[param]))
+                            iah = iah.filter(query) 
+                    if param=='funded_by':
+                        if filterParams[param]:
+                            query = reduce(or_, (Q(funded_by__in=item) for item in filterParams[param]))
+                            iah = iah.filter(query) 
+                    if param=='program_duration':
+                        if filterParams[param]:
+                            query = reduce(or_, (Q(program_duration__in=item) for item in filterParams[param]))
+                            iah = iah.filter(query) 
+
+                    if param == 'regionn':
+                        if filterParams[param]:
+                            iah = iah.filter(address__location__regionId__region_name=filterParams[param])
+                    if param == 'wereda':
+                        if filterParams[param]:
+                            iah = iah.filter(address__location__wereda_name=filterParams[param])
+                
+                context['iahs'] = iah
+                return render(request,'startup_main/iah_filters.html',context)   
+        return render(request,'startup_main/iah_filters.html',context)
+             
 
 
 
