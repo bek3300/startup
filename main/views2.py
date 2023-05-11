@@ -48,7 +48,7 @@ def adminHOme(request):
         context['iah'] = IncubatorsAccelatorsHub.objects.exclude(profile__user=request.user.id)
         context['df'] = DonorFunder.objects.exclude(profile__user=request.user.id)
         context['government'] = Goveroment.objects.exclude(profile__user=request.user.id)
-        return render(request,'startup/admin/dashboard.html',context)
+        return render(request,'user_admin/index.html',context)
     else:
         logout(request)
         return HttpResponseRedirect(reverse('main:login'))
@@ -93,6 +93,11 @@ def loginUser(request):
             return render (request,'startup_main/login.html',context)
         
 def homePage(request):
+    context['startup'] = Startup.objects.all()
+    context['mentor'] = Mentor.objects.all()
+    context['incubator'] = IncubatorsAccelatorsHub.objects.all()
+    context['investor'] = DonorFunder.objects.all()
+    context['government'] = Goveroment.objects.all()
     return render (request,'startup_main/index.html',context)
 
 
@@ -387,12 +392,40 @@ def networks(request,typeOf):
             context['iah'] = iah
             connectList = Connect.objects.filter(Q(to_user=request.user.id)|Q(from_user=request.user.id))
             context['connectList']=connectList
-            return render(request,'startup_main/mentor.html', context)
+            return render(request,'startup_main/iah.html', context)
         else:
             connectList = Connect.objects.exclude(to_user=request.user.id,from_user=request.user.id)
             iah = IncubatorsAccelatorsHub.objects.filter(profile__user__is_active=True)
             context['iah'] = iah  
         return render(request,'startup_main/iah.html', context)
+    if(typeOf=='investor'):
+        for field in DonorFunder._meta.get_fields(include_parents=False):
+            if isinstance(field, models.OneToOneField):
+                if field.name=='description':
+                        for f in field.related_model._meta.get_fields(include_parents=False):
+                            if( str(f.name) ==  'name' or str(f.name)=='sector'):
+                                filters.append(f.verbose_name)
+                if field.name=='address':
+                        for f in field.related_model._meta.get_fields(include_parents=False):
+                            if( str(f.name) ==  'location' ):
+                                filters.append('Address')                      
+            else:  
+                if(not field.verbose_name ==  'ID' and not field.name == 'doner_type_by_other' and not field.name == 'investment_type_other' and not  field.name == "maxInvestRange"):
+                    filters.append(field.verbose_name)
+                    context['filters'] = filters
+        if request.user.is_authenticated:
+            investor = DonorFunder.objects.filter(profile__user__is_active=True).exclude(profile__user=request.user.id)
+            context['investor'] = investor
+            connectList = Connect.objects.filter(Q(to_user=request.user.id)|Q(from_user=request.user.id))
+            context['connectList']=connectList
+            return render(request,'startup_main/investor.html', context)
+        else:
+            connectList = Connect.objects.exclude(to_user=request.user.id,from_user=request.user.id)
+            investor = DonorFunder.objects.filter(profile__user__is_active=True)
+            context['investor'] = investor  
+        return render(request,'startup_main/investor.html', context)
+
+
 
 def register(request):
     if request.method== 'POST':
@@ -502,21 +535,18 @@ def filter(request,typeOf):
                             mentor = mentor.filter(address__location__wereda_name=filterParams[param])
                 context['mentors'] = mentor
                 return render(request,'startup_main/mentor_filters.html',context)
+            
         if typeOf=='iah':
             filterParams=json.loads(list(request.POST)[0])
-            print(filterParams)
             if filterParams:
                 iah = IncubatorsAccelatorsHub.objects.all()
                 for param in filterParams:
                     if param=='service':
                         if filterParams[param]:
-                            query = reduce(or_, (Q(service__in=item) for item in filterParams[param]))
-                            iah = iah.filter(query)
-                            print(iah)     
+                            iah = iah.filter(service__in=filterParams[param])
                     if param=='ownership':
                         if filterParams[param]:
-                            query = reduce(or_, (Q(ownership__in=item) for item in filterParams[param]))
-                            iah = iah.filter(query) 
+                            iah = iah.filter(ownership__in=filterParams[param]) 
                     if param=='level':
                         if filterParams[param]:
                             query = reduce(or_, (Q(level__in=item) for item in filterParams[param]))
@@ -531,20 +561,17 @@ def filter(request,typeOf):
                             iah = iah.filter(query) 
                     if param=='funded_by':
                         if filterParams[param]:
-                            query = reduce(or_, (Q(funded_by__in=item) for item in filterParams[param]))
-                            iah = iah.filter(query) 
+                            iah = iah.filter(funded_by__in=filterParams[param]) 
                     if param=='program_duration':
                         if filterParams[param]:
                             query = reduce(or_, (Q(program_duration__in=item) for item in filterParams[param]))
                             iah = iah.filter(query) 
-
                     if param == 'regionn':
                         if filterParams[param]:
                             iah = iah.filter(address__location__regionId__region_name=filterParams[param])
                     if param == 'wereda':
                         if filterParams[param]:
                             iah = iah.filter(address__location__wereda_name=filterParams[param])
-                
                 context['iahs'] = iah
                 return render(request,'startup_main/iah_filters.html',context)   
         return render(request,'startup_main/iah_filters.html',context)

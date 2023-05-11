@@ -1,6 +1,53 @@
  {% extends './base.html' %}
  {% block content %}
  {% load static %}
+<style>
+
+  .ol-popup {
+    position: absolute;
+    background-color: white;
+    -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+    filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #cccccc;
+    {% comment %} bottom: 12px; {% endcomment %}
+    left: -50px;
+    min-width: 280px;
+    {% comment %} width: 670px; {% endcomment %}
+
+  }
+  .ol-popup:after, .ol-popup:before {
+    top: 100%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+  }
+  .ol-popup:after {
+    border-top-color: white;
+    border-width: 10px;
+    left: 48px;
+    margin-left: -10px;
+  }
+  .ol-popup:before {
+    border-top-color: #cccccc;
+    border-width: 11px;
+    left: 48px;
+    margin-left: -11px;
+  }
+  .ol-popup-closer {
+    text-decoration: none;
+    position: absolute;
+    top: 2px;
+    right: 8px;
+  }
+  .ol-popup-closer:after {
+    content: "✖";
+  }
+</style>
  {% include './header.html' %}
  <!-- ======= Hero Section ======= -->
  <section id="hero" class="hero carousel  carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
@@ -99,9 +146,12 @@
 
       </div>
 
-      <div class="map" id='map'>
+      <div class="map" id='map' style="height:70vh">
       </div><!-- End Google Maps -->
-
+      <div id="popup" class="ol-popup">
+        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+        <div id="popup-content"></div>
+      </div>
       <div class="container">
 
         <div class="row gy-5 gx-lg-5">
@@ -171,5 +221,142 @@
     </section><!-- End Contact Section -->
 
   </main><!-- End #main -->
+  <script>
+
+    var container = document.getElementById('popup');
+    var content = document.getElementById('popup-content');
+    var closer = document.getElementById('popup-closer');
+    var overlay = new ol.Overlay(/** @type {olx.OverlayOptions} */ ({
+      element: container,
+      autoPan: true,
+      autoPanAnimation: {
+        duration: 250
+      }
+    }));
+
+
+    /**
+     * Add a click handler to hide the popup.
+     * @return {boolean} Don't follow the href.
+     */
+    
+function getStartup(feature){
+  {% for s in startup %}
+  if('{{s.address.location.wereda_name}}'== feature.get('NAME_2') && '{{s.address.location.regionId.region_name}}'== feature.get('NAME_1') )
+  console.log('{{s}}')
+  {%endfor%}
+}
+function getMentor(feature){
+  {% for m in mentor %}
+  if('{{m.address.location.wereda_name}}'== feature.get('NAME_2') && '{{m.address.location.regionId.region_name}}'== feature.get('NAME_1') )
+  console.log('{{m}}')
+  {%endfor%}
+}
+function getIncubator(feature){
+  {% for i in incubator %}
+  if('{{i.address.location.wereda_name}}'== feature.get('NAME_2') && '{{i.address.location.regionId.region_name}}'== feature.get('NAME_1') )
+  console.log('{{i}}')
+  {%endfor%}
+}
+function getInvestor(feature){
+  {% for i in investor %}
+  if('{{i.addresmlocation.wereda_name}}'== feature.get('NAME_2') && '{{i.address.location.regionId.region_name}}'== feature.get('NAME_1') )
+  console.log('{{i}}')
+  {%endfor%}
+}
+function getGovernment(feature){
+  {% for s in government %}
+  if('{{g.address.location.wereda_name}}'== feature.get('NAME_2') && '{{g.address.location.regionId.region_name}}'== feature.get('NAME_1') )
+  console.log('{{g}}')
+  {%endfor%}
+}
+var vectorSource =new ol.source.Vector()
+var wereda_geoJson =  "http://localhost:8088/geoserver/elri/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=elri%3AETH_adm2&maxFeatures=50&outputFormat=application%2Fjson";
+$.getJSON( wereda_geoJson, function( data ) {
+
+
+ vectorSource.addFeatures((new ol.format.GeoJSON()).readFeatures(data))
+
+})
+var vectorLayer = new ol.layer.Vector({
+source: vectorSource,
+});
+console.log(vectorSource)
+baseMap = new ol.layer.Group({
+  layers: [
+  new ol.layer.Tile({
+    source: new ol.source.OSM()
+  })],
+  name: 'BaseMap'
+});
+var map = new ol.Map({
+  layers: [
+  baseMap,vectorLayer
+  ],
+  overlays: [overlay],
+  target: 'map',
+  controls: ol.control.defaults({
+    attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+      collapsible: false
+    })
+  }),
+  view: new ol.View({
+    center: [39, 9],
+    zoom: 5,
+    projection:'EPSG:4326'
+  })
+});
+
+const layerSwitcher = new LayerSwitcher({
+  reverse: true,
+  groupSelectStyle: 'group'
+});
+map.addControl(layerSwitcher);
+var select = new ol.interaction.Select();
+map.addInteraction(select);
+select.on("select", function(e) {
+  e.target.getFeatures().forEach(function(ee){
+    console.log()
+    overlay.setPosition(ee.get('geometry').getFirstCoordinate());
+    content.innerHTML = 
+      '<ul class="list-group" style="color:black">'+
+        '<li class="list-group-item d-flex justify-content-between align-items-center">'+
+          'Startups'+
+          '<span class="badge badge-primary badge-pill" style="color:black">14</span>'+
+        '</li>'+
+        '<li class="list-group-item d-flex justify-content-between align-items-center">'+
+          'Mentors'+
+          '<span class="badge badge-primary badge-pill" style="color:black">2</span>'+
+        '</li>'+
+        '<li class="list-group-item d-flex justify-content-between align-items-center">'+
+         'Incubators'+
+          '<span class="badge badge-primary badge-pill" style="color:black">1</span>'+
+        '</li>'+
+        '<li class="list-group-item d-flex justify-content-between align-items-center">'+
+          'Ivestors'+
+           '<span class="badge badge-primary badge-pill" style="color:black">1</span>'+
+         '</li>'+
+         '<li class="list-group-item d-flex justify-content-between align-items-center">'+
+          'Government'+
+           '<span class="badge badge-primary badge-pill" style="color:black">1</span>'+
+         '</li>'+
+      '</ul>'
+   
+  getStartup(ee)
+  getMentor(ee)
+  getIncubator(ee)
+  getInvestor(ee)
+  getGovernment(ee)
+  })
+
+});
+
+closer.onclick = function() {
+  overlay.setPosition(undefined);
+  closer.blur();
+  {% comment %} map.removeInteraction(select) {% endcomment %}
+  return false;
+};
+  </script>
   {% include './footer.html' %}
 {% endblock content %}

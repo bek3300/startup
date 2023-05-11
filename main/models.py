@@ -221,7 +221,7 @@ class DonorFunder(models.Model):
         max_length=500,
         # choices=STARTUP_STAGE,
         # read_only=False,
-    ),size=20,default=list)
+    ),size=20,default=list,verbose_name='Level')
     investment_type = models.CharField(
         verbose_name = 'Investment Type',
         max_length=50,
@@ -231,8 +231,7 @@ class DonorFunder(models.Model):
     investment_type_other = models.CharField(max_length=50,blank=True,null=True)
     profile = models.OneToOneField(Profile, on_delete=models.DO_NOTHING,blank=False,null=False,related_name='donor_profile')
     description = models.OneToOneField(Description, on_delete=models.DO_NOTHING,blank=False,null=False,related_name='donor_description')
-    maxInvestRange = models.CharField(verbose_name = 'Investment Range',
-                                      max_length=100,blank=True,null=True)
+    maxInvestRange = models.CharField(verbose_name = 'Investment Range',max_length=100,blank=True,null=True)
     def __str__(self):
         return self.description.name.__str__()
 

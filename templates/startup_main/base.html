@@ -34,6 +34,8 @@
   <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
   <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
   <script src="https://openlayers.org/en/v3.20.1/build/ol.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/ol-layerswitcher@4.1.1/dist/ol-layerswitcher.css" />
+
   <style>
     a.skiplink {
       position: absolute;
@@ -60,6 +62,7 @@
 
 
 <body>
+ 
   {% include './messages.html' %}
 {% block content%}
 {% endblock content%}
@@ -77,28 +80,22 @@
 
   <!-- Template Main JS File -->
   <script src="{% static 'assets/js/main.js'%}"></script>
-  <script>
-    var map = new ol.Map({
-      layers: [
-        new ol.layer.Tile({
-          source: new ol.source.OSM()
-        })
-      ],
-      target: 'map',
-      controls: ol.control.defaults({
-        attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
-          collapsible: false
-        })
-      }),
-      view: new ol.View({
-        center: [39, 9],
-        zoom: 6,
-        projection:'EPSG:4326'
-      })
-    });
-
-  </script>
+  <script src="https://unpkg.com/ol-layerswitcher@4.1.1"></script>
   {% block scripts %}{% endblock %}
 </body>
 
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
