@@ -8,7 +8,11 @@ app_name = 'main'
 urlpatterns = [
     path('',views2.homePage, name='homepage'),
     path('login/',views2.loginUser, name='login'),
-    path('home/',views2.adminHOme, name='home'),
+    path('explore/',views2.logged_user, name='explore'),
+    path('home/',views2.logged_user, name='home'),
+    path('messages/',views2.messages, name='messages'),
+    path('message_detail/',views2.message_detail, name='message_detail'),
+
     path('logout/',views2.logout_view, name='logout'),
     path('explore/',views2.explore, name='explore'),
     path('profile/',views2.profile, name='profile'),
@@ -24,6 +28,10 @@ urlpatterns = [
     re_path(r'^users/accept/(?P<id>[\w-]+)/$', views2.accept_friend_request),
     re_path(r'^users/delete/(?P<id>[\w-]+)/$', views2.delete_friend_request),
     path('users/send/<int:id>/', views2.send_friend_request, name='freind_request'),
+
+
+
+    path('admin/',views2.admin, name='admin'),
 #     path('<int:pk>/', views.BookDetailView.as_view(), name='detail'),
 ]
 

@@ -26,7 +26,7 @@ admin.site.index_title = 'Requiremental Components'                 # default: "
 admin.site.site_title = 'HTML title from adminsitration' # default: "Django site admin"
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('super-admin/', admin.site.urls),
     path('', include('main.urls'),name='main'),
 ]
 if settings.DEBUG:

@@ -114,10 +114,15 @@ class Startup(models.Model):
     description = models.OneToOneField(Description, on_delete=models.DO_NOTHING,blank=False,null=False,related_name='startup_description')
     address = models.OneToOneField(Address, on_delete=models.DO_NOTHING,blank=False,null=False,related_name='startup_address')
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE,blank=False,null=False,related_name='startup_profile')
+    @property
+    def is_pending(self):
+        return self
     def __str__(self):
         return self.description.name.__str__()
     def get_absolute_url(self):
     	return "/startup/{}".format(self.description.name)
+    
+    
     
 
 class Mentor(models.Model):
@@ -151,7 +156,9 @@ class Mentor(models.Model):
         verbose_name = 'Attachment',
         upload_to='mentor/attachments',blank=True,null=True, help_text="please upload relevant documents max 10")
     description = models.OneToOneField(Description, on_delete=models.DO_NOTHING,blank=False,null=False,related_name='mentor_description')
-
+    @property
+    def is_pending(self):
+        return self
     def __str__(self):
         return self.description.name.__str__()
 
@@ -203,6 +210,9 @@ class IncubatorsAccelatorsHub(models.Model):
     )
     attachments = models.FileField(upload_to='incubetor/attachments',blank=True,null=True,help_text="please upload relevant documents max 10")
     profile = models.OneToOneField(Profile, on_delete=models.DO_NOTHING,blank=False,null=False,related_name='iha_address')
+    @property
+    def is_pending(self):
+        return self
     def __str__(self):
         return self.description.name.__str__()
 
@@ -232,6 +242,9 @@ class DonorFunder(models.Model):
     profile = models.OneToOneField(Profile, on_delete=models.DO_NOTHING,blank=False,null=False,related_name='donor_profile')
     description = models.OneToOneField(Description, on_delete=models.DO_NOTHING,blank=False,null=False,related_name='donor_description')
     maxInvestRange = models.CharField(verbose_name = 'Investment Range',max_length=100,blank=True,null=True)
+    @property
+    def is_pending(self):
+        return self
     def __str__(self):
         return self.description.name.__str__()
 
@@ -253,23 +266,28 @@ class Goveroment(models.Model):
     
     description = models.OneToOneField(Description, on_delete=models.DO_NOTHING,blank=False,null=False,related_name='goveroment_description')
     profile = models.OneToOneField(Profile, on_delete=models.DO_NOTHING,blank=False,null=False)
+    @property
+    def is_pending(self):
+        return self
     def __str__(self):
         return self.description.name
 
 class Connect(models.Model):
-    to_user = models.ForeignKey(User, related_name='to_user', on_delete=models.CASCADE,)
-    from_user = models.ForeignKey(User, related_name='from_user', on_delete=models.CASCADE,)
+    requester = models.ForeignKey(User, related_name='requester', on_delete=models.CASCADE,)
+    responser = models.ForeignKey(User, related_name='responser', on_delete=models.CASCADE,)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.to_user + self.from_user  
     STATUS_CHOICES = (
         (1, 'Pending'),
         (2, 'Accepted'),
         (3, 'Rejected'),
     )
-    # store this as an integer, Django handles the verbose choice options
     status = models.IntegerField(choices=STATUS_CHOICES, default=1)
     def __str__(self):
-        return "From {}, to {}".format(self.from_user.username, self.to_user.username)
-    @staticmethod
+        return "From {}, to {}".format(self.requester.username, self.responser.username)
+    
     def connects(user):
         connects = []
         for _ in Connect.objects.filter(to_user=user, status=1):
@@ -279,10 +297,28 @@ class Connect(models.Model):
 
         return connects
 
-    @staticmethod
+    
     def pending_requests(user):
         requests = []
         for _ in Connect.objects.filter(friend=user, status=0):
             requests.append({"username": _.user.username, "gravatar": _.user.avatar})
 
         return requests
+
+
+
+class Messages(models.Model):
+    to_user = models.ForeignKey(User, related_name='sender', on_delete=models.CASCADE,)
+    from_user = models.ForeignKey(User, related_name='reciver', on_delete=models.CASCADE,)
+    message_body = models.CharField(max_length=100000,blank=False,null=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+
+class Carousel(models.Model):
+    description = models.CharField(
+        verbose_name = 'Description',
+        max_length=50,blank=True,null=True)
+    svg = models.FileField(
+        verbose_name = 'svg',
+        upload_to='description/svg',blank=True,null=True, help_text="please upload relevant documents max 10")
+    

@@ -83,6 +83,9 @@ from .models import *
 class UserProfileDataAdmin(admin.ModelAdmin):
     list_display = ['id','user_id','user','birth_date','profile_pic',]
     list_filter = ('user', 'birth_date')
+@admin.register(Messages)
+class MessagesDataAdmin(admin.ModelAdmin):
+    pass
 
 # @admin.register(UserVerification)
 # class UserVerificationAdmin(admin.ModelAdmin):

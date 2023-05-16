@@ -29,12 +29,13 @@
             $("#"+reg[i].dataset.region+ " select[name=region_name]").on("change", function () {
               console.log($("#"+this.parentNode.parentNode.dataset.region+" select[name=wereda_name]"))
               
-            geoserver_url= "http://localhost:8088/geoserver/elri/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=elri%3AETH_adm2&maxFeatures=50&outputFormat=application%2Fjson"
+            geoserver_url= "http://localhost:8080/geoserver/admin/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=admin%3AETH_adm2&maxFeatures=50&outputFormat=application%2Fjson"
           var self=this
             $.getJSON( geoserver_url, function( data ) {
                 var items = [];
                 var wereda_names = data.features.filter(x=>x.properties['NAME_1']==self.value);
                 $("#"+self.parentNode.parentNode.dataset.region+" select[name=wereda_name]").empty()
+                $("#"+self.parentNode.parentNode.dataset.region+" select[name=wereda_name]").append('<option value="">-------</option>');
                wereda_names.forEach(function(e){
                 $("#"+self.parentNode.parentNode.dataset.region+" select[name=wereda_name]").append('<option value="'+e.properties['NAME_2']+'">'+e.properties['NAME_2'])+'</option>';
                 
@@ -58,23 +59,23 @@
 
 
 
-        {% comment %} $("#id_region_name").on('change', function(){
-            $("#id_wereda_name").empty()
-            geoserver_url= "http://localhost:8088/geoserver/elri/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=elri%3AETH_adm2&maxFeatures=50&outputFormat=application%2Fjson"
-          var self=this
-            $.getJSON( geoserver_url, function( data ) {
-                var items = [];
+        // {% comment %} $("#id_region_name").on('change', function(){
+        //     $("#id_wereda_name").empty()
+        //     geoserver_url= "http://localhost:8080/geoserver/admin/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=admin%3AETH_adm2&maxFeatures=50&outputFormat=application%2Fjson"
+        //   var self=this
+        //     $.getJSON( geoserver_url, function( data ) {
+        //         var items = [];
                 
                 
-                var wereda_names = data.features.filter(x=>x.properties['NAME_1']==self.value);
-               wereda_names.forEach(function(e){
+        //         var wereda_names = data.features.filter(x=>x.properties['NAME_1']==self.value);
+        //        wereda_names.forEach(function(e){
                 
-                $("#id_wereda_name").append('<option value="'+e.properties['NAME_2']+'">'+e.properties['NAME_2'])+'</option>';
+        //         $("#id_wereda_name").append('<option value="'+e.properties['NAME_2']+'">'+e.properties['NAME_2'])+'</option>';
                 
-               })
-              });
+        //        })
+        //       });
           
-        }) {% endcomment %}
+        // }) {% endcomment %}
          
        })
     

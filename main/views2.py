@@ -1,5 +1,6 @@
 from .models import *
 from .forms import *
+from django.db.models import *
 from django.contrib.auth.models import User,Group
 from django.db import DatabaseError, transaction
 from django.contrib.auth import logout
@@ -24,6 +25,9 @@ from django.views.decorators.csrf import csrf_exempt
 context = {}
 
 
+
+
+
 def checkProfileType(user):
     print(len(Startup.objects.filter(profile__user=user.id)))
     if len(Startup.objects.filter(profile__user=user.id))>=1:
@@ -37,21 +41,87 @@ def checkProfileType(user):
     if len(Goveroment.objects.filter(profile__user=user.id))>=1:
         return 'Goveroment'
     
-
+STATUS_CHOICES = (
+        (1, 'Pending'),
+        (2, 'Accepted'),
+        (3, 'Rejected'),
+    )
+def getFilteredOf(objectT,request,connect):
+    objectT=objectT.annotate(
+             is_connected=Case(
+             When(
+             Exists(
+             Subquery(  
+             connect.filter(
+                  Q(requester=OuterRef('profile__user'),responser=request.user.id) |
+                     Q(responser=OuterRef('profile__user'),requester=request.user.id)
+             ).values_list('status',flat=True))),
+             then=connect.filter(
+                  Q(requester=OuterRef('profile__user'),responser=request.user.id) |
+                     Q(responser=OuterRef('profile__user'),requester=request.user.id)
+             ).values_list('status',flat=True)
+             ),
+             default=Value(0)
+             )
+        )
+    return objectT
 @login_required(login_url='/login/')
-def adminHOme(request):
+def logged_user(request):
+    import itertools
     if request.user.is_authenticated and  not request.user.is_superuser:
         current_profile = Profile.objects.get(user=request.user.id)
         context['profile_type']=current_profile
+        context['connect'] = Connect.objects.filter(Q(responser=request.user.id) | Q(requester=request.user.id))
         context['startups'] = Startup.objects.exclude(profile__user=request.user.id)
+        user = User.objects.prefetch_related('requester').prefetch_related('responser').values_list('id',flat=True)
         context['mentors'] = Mentor.objects.exclude(profile__user=request.user.id)
         context['iah'] = IncubatorsAccelatorsHub.objects.exclude(profile__user=request.user.id)
         context['df'] = DonorFunder.objects.exclude(profile__user=request.user.id)
         context['government'] = Goveroment.objects.exclude(profile__user=request.user.id)
-        return render(request,'user_admin/index.html',context)
+        context['startups']= getFilteredOf(context['startups'],request,context['connect'])
+        context['mentors']=  getFilteredOf(context['mentors'],request,context['connect'])
+        context['iah']= getFilteredOf(context['iah'],request,context['connect'])
+        context['df']=  getFilteredOf(context['df'],request,context['connect'])
+        context['government']=  getFilteredOf(context['government'],request,context['connect'])
+        
+        
+        return render(request,'logged_user/index.html',context)
     else:
         logout(request)
         return HttpResponseRedirect(reverse('main:login'))
+
+from django.db.models import OuterRef, Subquery
+def messages(request):
+    messages = Messages.objects.filter(
+        id__in =  Subquery(
+        User.objects.filter(
+            Q(from_user__to_user=request.user.id) |#filters messages related to user
+            Q(to_user__from_user=request.user.id)
+         ).distinct().annotate(
+             last_msg=Subquery(
+                 Messages.objects.filter(
+                     Q(from_user=OuterRef('id'),to_user=request.user.id) |
+                     Q(to_user=OuterRef('id'),from_user=request.user.id)
+                 ).order_by('-timestamp')[:1].values_list('id',flat=True) 
+             )
+         ).values_list('last_msg', flat=True)
+    )
+)
+   
+#      context['messages_sent_d'] = messages
+#      print(messages)
+    return render(request, 'logged_user/messages.html',context)
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def message_detail(request):
+    context['my_message']=Messages.objects.filter(from_user=request.POST['sender']).filter(to_user=request.POST['reciver'])
+    
+    return render(request,'logged_user/message_detail.html',context)
+
+
+def admin(request):
+     return render(request, 'adminstration/index.html')
 
         
 
@@ -63,12 +133,22 @@ def loginUser(request):
         try:
             user = User.objects.get(username=username)
             if user:
-                if user is not None and user.is_active==True:
+                if user is not None and user.is_active==True and not user.is_superuser:
                     authenticated_user = authenticate(request,username=username, password=password)
                     if authenticated_user is not None:
+                        logout(request)
                         login(request, user)
                         context['user']=user
                         return HttpResponseRedirect(reverse('main:home'))
+                elif not user.is_superuser:
+                    authenticated_user = authenticate(request,username=username, password=password)
+                    if authenticated_user is not None:
+                        logout(request)
+                        login(request, user)
+                        context['user']=user
+                        return HttpResponseRedirect(reverse('main:admin'))
+                     
+            
                 elif user.is_active==False:
                     return HttpResponse('user is not active',status=403)
                 else:
@@ -98,14 +178,16 @@ def homePage(request):
     context['incubator'] = IncubatorsAccelatorsHub.objects.all()
     context['investor'] = DonorFunder.objects.all()
     context['government'] = Goveroment.objects.all()
-    return render (request,'startup_main/index.html',context)
+    return render (request,'main/index.html',context)
 
 
 def explore(request):
     return render (request,'startup/admin/explore.html',context)
 
+def home(request):
+    return render (request,'logged_user/home.html',context)
 
-@login_required
+@login_required(login_url='/login/')
 def profile(request):
     profile = Profile.objects.get(user=request.user)
     context['startup_form']= StartupForm(instance=Startup.objects.get(profile=profile))
@@ -305,17 +387,28 @@ def send_friend_request(request, id):
 		return HttpResponseRedirect('/users')
 
 
+@login_required(login_url='/login/')
 def connect(request):
-    user = get_object_or_404(User, id=request.POST['connect'])
-    try:
-        frequest, created = Connect.objects.get_or_create(
-			from_user=request.user,
-			to_user=user)
-    except Exception as e:
-        print(e)
+    user = get_object_or_404(User, id=request.POST.get('userId'))
+    print(user)
+    print(request.user)
+    previuosly_connected = Connect.objects.filter(Q(requester=user)).filter( Q(responser=request.user))
+    print(previuosly_connected)
+    if not previuosly_connected:
+        try:
+            frequest, created = Connect.objects.get_or_create(
+                requester=request.user,
+                responser=user)
+            print('saved')
+        except Exception as e:
+            print(e)
+    else:
+         print('already connected')
+         
+         
+    print(previuosly_connected)
+   
     return HttpResponse('users')
-    # return render(request,'startup_main/startup.html', context)
-from django.db.models import Q
 
 def networks(request,typeOf):
     filters=[]
@@ -608,8 +701,4 @@ def getContent(request,typeOf):
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse('main:login'))
-
-
-
-
 
