@@ -1,4 +1,7 @@
 {% extends './base.html'%} {% block content %} {% include './navbar.html' %} 
+{% comment %} <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"> {% endcomment %}
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 {% load my_filters%}
 {%load static %}
 <!-- ======= Breadcrumbs ======= -->
@@ -18,8 +21,11 @@
 
       <div class="col-lg-9">
         <div class="input-group">
-            <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+          <div class="ui-widget" style="display:flex">
+            <label for="tags">Search for connected  profiles and send messages </label>
+            <input class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon"  id="tags" size="50">
             <button type="button" class="btn btn-outline-primary">search</button>
+          </div>
           </div>
         <section style="background-color: #eee;">
             <div class="container py-5">
@@ -33,7 +39,7 @@
           
                       <ul class="list-unstyled mb-0">
                         {% for m in messages_sent_d %}
-                        <li onclick=getMessageDetail('{{m.from_user.id}}','{{m.to_user.id}}') class="p-2 border-bottom" style="background-color: #eee;">
+                        <li onclick=getMessageDetail('{{m.sender.id}}','{{m.reciever.id}}') class="p-2 border-bottom" style="background-color: #eee;">
                           <a  class="d-flex justify-content-between">
                             <div class="d-flex flex-row">
                               <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-8.webp" alt="avatar"
@@ -87,43 +93,7 @@
                   <ul class="list-unstyled">
                <div id='replaced'>
    
-                   
-                    {% comment %} {% for m in messages %}
-                    {% if m.from_user == user %}
-                    <li class="d-flex justify-content-between mb-4">
-                      <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-8.webp" alt="avatar"
-                        class="rounded-circle d-flex align-self-start me-3 shadow-1-strong" width="60">
-                      <div class="card">
-                        <div class="card-header d-flex justify-content-between p-3">
-                          <p class="fw-bold mb-0">{{m.from_user.username}}</p>
-                          <p class="text-muted small mb-0"><i class="far fa-clock"></i> {{ m.timestamp|timesince|upto:','}} ago</p>
-                        </div>
-                        <div class="card-body">
-                          <p class="mb-0">
-                           {{m.message_body}}
-                          </p>
-                        </div>
-                      </div>
-                    </li>
-                    {%else%}
-                    <li class="d-flex justify-content-between mb-4">
-                      <div class="card w-100">
-                        <div class="card-header d-flex justify-content-between p-3">
-                          <p class="fw-bold mb-0">{{ m.from_user}}</p>
-                          <p class="text-muted small mb-0"><i class="far fa-clock"></i> {{ m.timestamp|timesince|upto:','}} ago</p>
-                        </div>
-                        <div class="card-body">
-                          <p class="mb-0">
-                            {{m.message_body}}
-                          </p>
-                        </div>
-                      </div>
-                      <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-5.webp" alt="avatar"
-                        class="rounded-circle d-flex align-self-start ms-3 shadow-1-strong" width="60">
-                    </li>
-                    {%endif%}
-                    {% endfor%}  {% endcomment %}
-                  </div>
+                                  </div>
                   
                   </ul>
           
@@ -137,11 +107,72 @@
     </div>
   </div>
 </section>
-<!-- End Blog Section -->
+<script>
+  $( function() {
+    var availableTags = []
+    function getCurrentUserData(user){
+      $.ajax({
+        headers: { "X-CSRFToken":  '{{ csrf_token }}' },
+        url: {% url 'main:currentUserConnectUserList'%},
+        data: {'user':user},
+        type: "POST",
+        success: function (data) {
+          availableTags=data.map(x=>x.profile__user__username)
+         
+          
+      
+          
+        },
+        error: function (data) {
+        }
+      });
+    
+    }
+getCurrentUserData('{{user.id}}')
+   
+    function split( val ) {
+      return val.split( /,\s*/ );
+    }
+    function extractLast( term ) {
+      return split( term ).pop();
+    }
+ 
+    $( "#tags" )
+      // don't navigate away from the field on tab when selecting an item
+      .on( "keydown", function( event ) {
+        if ( event.keyCode === $.ui.keyCode.TAB &&
+            $( this ).autocomplete( "instance" ).menu.active ) {
+          event.preventDefault();
+        }
+      })
+      .autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+          // delegate back to autocomplete, but extract the last term
+          response( $.ui.autocomplete.filter(
+            availableTags, extractLast( request.term ) ) );
+        },
+        focus: function() {
+          // prevent value inserted on focus
+          return false;
+        },
+        select: function( event, ui ) {
+          var terms = split( this.value );
+          // remove the current input
+          terms.pop();
+          // add the selected item
+          terms.push( ui.item.value );
+          // add placeholder to get the comma-and-space at the end
+          terms.push( "" );
+          this.value = terms.join( ", " );
+          return false;
+        }
+      });
+  } );
+  </script>
 
 
 <div class="overlay hidden"></div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script> 
 
 
 {% endblock content%}

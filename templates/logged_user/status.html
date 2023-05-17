@@ -2,7 +2,7 @@
                   <p  style="color:#0ea2bd">Pending</p>
                  
                   {% elif s.is_connected == 2  %}
-                  <p style="color:#0ea2bd">Connected</p>
+                  <a style="color:white">Message</a>
                   {% elif s.is_connected == 3  %}
                   <a id='connect{{s.profile.user.id}}' > Connect</a>
                   {% else %} 

@@ -308,8 +308,8 @@ class Connect(models.Model):
 
 
 class Messages(models.Model):
-    to_user = models.ForeignKey(User, related_name='sender', on_delete=models.CASCADE,)
-    from_user = models.ForeignKey(User, related_name='reciver', on_delete=models.CASCADE,)
+    sender = models.ForeignKey(User, related_name='sender', on_delete=models.CASCADE,)
+    reciever = models.ForeignKey(User, related_name='reciever', on_delete=models.CASCADE,)
     message_body = models.CharField(max_length=100000,blank=False,null=False)
     timestamp = models.DateTimeField(auto_now_add=True)
 
