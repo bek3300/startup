@@ -67,8 +67,6 @@ def getFilteredOf(objectT,request,connect):
     return objectT
 @login_required(login_url='/login/')
 def logged_user(request):
-    import itertools
-    if request.user.is_authenticated and  not request.user.is_superuser:
         current_profile = Profile.objects.get(user=request.user.id)
         context['profile_type']=current_profile
         context['connect'] = Connect.objects.filter(Q(responser=request.user.id) | Q(requester=request.user.id))
@@ -83,25 +81,88 @@ def logged_user(request):
         context['iah']= getFilteredOf(context['iah'],request,context['connect'])
         context['df']=  getFilteredOf(context['df'],request,context['connect'])
         context['government']=  getFilteredOf(context['government'],request,context['connect'])
-        
-        
-        return render(request,'logged_user/index.html',context)
-    else:
-        logout(request)
-        return HttpResponseRedirect(reverse('main:login'))
+        context['connected_startup']=context['startups'].filter(is_connected=2)
+        def getSent(request,typeOf):
+            sent_connects = Connect.objects.filter(Q(requester=request.user) and Q(status=2)).values_list('responser',flat=True)
+            if typeOf=='startup':
+                 sent_startup = Startup.objects.filter(profile__user__in=sent_connects)
+                 return sent_startup
+            elif typeOf=='mentor':
+                 sent_mentor = Mentor.objects.filter(profile__user__in=sent_connects)
+                 return sent_mentor
+            elif typeOf=='iah':
+                 sent_iah= IncubatorsAccelatorsHub.objects.filter(profile__user__in=sent_connects)
+                 return sent_iah
+            elif typeOf=='df':
+                 sent_df = DonorFunder.objects.filter(profile__user__in=sent_connects)
+                 return sent_df
+            elif typeOf=='government':
+                 sent_government = Goveroment.objects.filter(profile__user__in=sent_connects)
+                 return sent_government
+        def getRecived(request,typeOf):
+            recived_connects = Connect.objects.filter(Q(responser=request.user) and Q(status=1)).values_list('responser',flat=True)
+            if typeOf=='startup':
+                 sent_startup = Startup.objects.filter(profile__user__in=recived_connects)
+                 return sent_startup
+            elif typeOf=='mentor':
+                 sent_mentor = Mentor.objects.filter(profile__user__in=recived_connects)
+                 return sent_mentor
+            elif typeOf=='iah':
+                 sent_iah= IncubatorsAccelatorsHub.objects.filter(profile__user__in=recived_connects)
+                 return sent_iah
+            elif typeOf=='df':
+                 sent_df = DonorFunder.objects.filter(profile__user__in=recived_connects)
+                 return sent_df
+            elif typeOf=='government':
+                 sent_government = Goveroment.objects.filter(profile__user__in=recived_connects)
+                 return sent_government
+        def getConnected(request,typeOf):
+            recived_connects = Connect.objects.filter(Q(responser=request.user)|Q(requester=request.user) and Q(status=2)).values_list('responser',flat=True)
+            if typeOf=='startup':
+                 sent_startup = Startup.objects.filter(profile__user__in=recived_connects)
+                 return sent_startup
+            elif typeOf=='mentor':
+                 sent_mentor = Mentor.objects.filter(profile__user__in=recived_connects)
+                 return sent_mentor
+            elif typeOf=='iah':
+                 sent_iah= IncubatorsAccelatorsHub.objects.filter(profile__user__in=recived_connects)
+                 return sent_iah
+            elif typeOf=='df':
+                 sent_df = DonorFunder.objects.filter(profile__user__in=recived_connects)
+                 return sent_df
+            elif typeOf=='government':
+                 sent_government = Goveroment.objects.filter(profile__user__in=recived_connects)
+                 return sent_government
+        context['sent_startup']=getSent(request,'startup')
+        context['sent_mentor']=getSent(request,'mentor')
+        context['sent_iah']=getSent(request,'iah')
+        context['sent_df']=getSent(request,'df')
+        context['sent_government']=getSent(request,'government')
+        context['recived_startup']=getRecived(request,'startup')
+        context['recived_mentor']=getRecived(request,'mentor')
+        context['recived_iah']=getRecived(request,'iah')
+        context['recived_df']=getRecived(request,'df')
+        context['recived_government']=getRecived(request,'government')
 
+        context['connected_startup']=getConnected(request,'startup')
+        context['connected_mentor']=getConnected(request,'mentor')
+        context['connected_iah']=getConnected(request,'iah')
+        context['connected_df']=getConnected(request,'df')
+        context['connected_government']=getConnected(request,'government')
+        return render(request,'logged_user/index.html',context)
+ 
 from django.db.models import OuterRef, Subquery
 def messages(request):
     messages = Messages.objects.filter(
         id__in =  Subquery(
         User.objects.filter(
-            Q(from_user__to_user=request.user.id) |#filters messages related to user
-            Q(to_user__from_user=request.user.id)
+            Q(requester__responser=request.user.id) |#filters messages related to user
+            Q(responser__requester=request.user.id)
          ).distinct().annotate(
              last_msg=Subquery(
                  Messages.objects.filter(
-                     Q(from_user=OuterRef('id'),to_user=request.user.id) |
-                     Q(to_user=OuterRef('id'),from_user=request.user.id)
+                     Q(requester=OuterRef('id'),responser=request.user.id) |
+                     Q(responser=OuterRef('id'),requester=request.user.id)
                  ).order_by('-timestamp')[:1].values_list('id',flat=True) 
              )
          ).values_list('last_msg', flat=True)
@@ -115,7 +176,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def message_detail(request):
-    context['my_message']=Messages.objects.filter(from_user=request.POST['sender']).filter(to_user=request.POST['reciver'])
+    context['my_message']=Messages.objects.filter(requester=request.POST['sender']).filter(responser=request.POST['reciver'])
     
     return render(request,'logged_user/message_detail.html',context)
 
@@ -182,10 +243,29 @@ def homePage(request):
 
 
 def explore(request):
-    return render (request,'startup/admin/explore.html',context)
+    if request.user.is_authenticated and  not request.user.is_superuser:
+        current_profile = Profile.objects.get(user=request.user.id)
+        context['profile_type']=current_profile
+        context['connect'] = Connect.objects.filter(Q(responser=request.user.id) | Q(requester=request.user.id))
+        context['startups'] = Startup.objects.exclude(profile__user=request.user.id)
+        user = User.objects.prefetch_related('requester').prefetch_related('responser').values_list('id',flat=True)
+        context['mentors'] = Mentor.objects.exclude(profile__user=request.user.id)
+        context['iah'] = IncubatorsAccelatorsHub.objects.exclude(profile__user=request.user.id)
+        context['df'] = DonorFunder.objects.exclude(profile__user=request.user.id)
+        context['government'] = Goveroment.objects.exclude(profile__user=request.user.id)
+        context['startups']= getFilteredOf(context['startups'],request,context['connect'])
+        context['mentors']=  getFilteredOf(context['mentors'],request,context['connect'])
+        context['iah']= getFilteredOf(context['iah'],request,context['connect'])
+        context['df']=  getFilteredOf(context['df'],request,context['connect'])
+        context['government']=  getFilteredOf(context['government'],request,context['connect'])
+        
+        
+        return render (request,'logged_user/explore.html',context)
+    else:
+        logout(request)
+        return HttpResponseRedirect(reverse('main:login'))
+    
 
-def home(request):
-    return render (request,'logged_user/home.html',context)
 
 @login_required(login_url='/login/')
 def profile(request):
@@ -297,8 +377,8 @@ def users_list(request):
 def connect_list(request):
 	p = Profile.objects.filter(user=request.user).first()
 	u = p.user
-	sent_friend_requests = Connect.objects.filter(from_user=request.user)
-	rec_friend_requests = Connect.objects.filter(to_user=request.user)
+	sent_friend_requests = Connect.objects.filter(requester=request.user)
+	rec_friend_requests = Connect.objects.filter(responser=request.user)
 
 	friends = p.friends.all()
 
@@ -309,7 +389,7 @@ def connect_list(request):
 
 		# if we have sent him a friend request
 		if len(Connect.objects.filter(
-			from_user=request.user).filter(to_user=p.user)) == 1:
+			requester=request.user).filter(responser=p.user)) == 1:
 				button_status = 'friend_request_sent'
 
 	context = {
@@ -325,25 +405,25 @@ def connect_list(request):
 def cancel_friend_request(request, id):
 		user = get_object_or_404(User, id=id)
 		frequest = Connect.objects.filter(
-			from_user=request.user,
-			to_user=user).first()
+			requester=request.user,
+			responser=user).first()
 		frequest.delete()
 		return HttpResponseRedirect('/users')
 
 def accept_friend_request(request, id):
-	from_user = get_object_or_404(User, id=id)
-	frequest = Connect.objects.filter(from_user=from_user, to_user=request.user).first()
-	user1 = frequest.to_user
-	user2 = from_user
+	requester = get_object_or_404(User, id=id)
+	frequest = Connect.objects.filter(requester=requester, responser=request.user).first()
+	user1 = frequest.responser
+	user2 = requester
 	user1.profile.friends.add(user2.profile)
 	user2.profile.friends.add(user1.profile)
 	frequest.delete()
 	return HttpResponseRedirect('/users/{}'.format(request.user.profile.id))
 
 def delete_friend_request(request, id):
-    from_user = get_object_or_404(User, id=id)
-    print(from_user)
-    frequest = Connect.objects.filter(from_user=from_user, to_user=request.user).first()
+    requester = get_object_or_404(User, id=id)
+    print(requester)
+    frequest = Connect.objects.filter(requester=requester, responser=request.user).first()
     frequest.delete()
     return HttpResponseRedirect('/users/{}'.format(request.user.profile.id))
 
@@ -353,8 +433,8 @@ def connect_list_view(request, pk=None):
 	u = User.objects.get(pk=pk)
 	p = u.profile
 	
-	sent_friend_requests = Connect.objects.filter(from_user=p.user)
-	rec_friend_requests = Connect.objects.filter(to_user=p.user)
+	sent_friend_requests = Connect.objects.filter(requester=p.user)
+	rec_friend_requests = Connect.objects.filter(responser=p.user)
 
 	friends = p.friends.all()
 
@@ -365,7 +445,7 @@ def connect_list_view(request, pk=None):
 
 		# if we have sent him a friend request
 		if len(Connect.objects.filter(
-			from_user=request.user).filter(to_user=p.user)) == 1:
+			requester=request.user).filter(responser=p.user)) == 1:
 				button_status = 'friend_request_sent'
 
 	context = {
@@ -382,8 +462,8 @@ def connect_list_view(request, pk=None):
 def send_friend_request(request, id):
 		user = get_object_or_404(User, id=id)
 		frequest, created = Connect.objects.get_or_create(
-			from_user=request.user,
-			to_user=user)
+			requester=request.user,
+			responser=user)
 		return HttpResponseRedirect('/users')
 
 
@@ -431,11 +511,11 @@ def networks(request,typeOf):
         startups = Startup.objects.filter(profile__user__is_active=True).exclude(profile__user=request.user.id)
         context['startups'] = startups
         if request.user.is_authenticated:
-            connectList = Connect.objects.filter(Q(to_user=request.user.id)|Q(from_user=request.user.id))
+            connectList = Connect.objects.filter(Q(responser=request.user.id)|Q(requester=request.user.id))
             context['connectList']=connectList
             return render(request,'startup_main/startup.html', context)
         else:
-            connectList = Connect.objects.exclude(to_user=request.user.id,from_user=request.user.id)
+            connectList = Connect.objects.exclude(responser=request.user.id,requester=request.user.id)
             startups = Startup.objects.filter(profile__user__is_active=True)
             context['startups'] = startups
             return render(request,'startup_main/startup.html', context)
@@ -457,11 +537,11 @@ def networks(request,typeOf):
         if request.user.is_authenticated:
             mentors = Mentor.objects.filter(profile__user__is_active=True).exclude(profile__user=request.user.id)
             context['mentors'] = mentors
-            connectList = Connect.objects.filter(Q(to_user=request.user.id)|Q(from_user=request.user.id))
+            connectList = Connect.objects.filter(Q(responser=request.user.id)|Q(requester=request.user.id))
             context['connectList']=connectList
             return render(request,'startup_main/mentor.html', context)
         else:
-            connectList = Connect.objects.exclude(to_user=request.user.id,from_user=request.user.id)
+            connectList = Connect.objects.exclude(responser=request.user.id,requester=request.user.id)
             mentors = Mentor.objects.filter(profile__user__is_active=True)
             context['mentors'] = mentors
         return render(request,'startup_main/mentor.html', context)
@@ -483,11 +563,11 @@ def networks(request,typeOf):
         if request.user.is_authenticated:
             iah = IncubatorsAccelatorsHub.objects.filter(profile__user__is_active=True).exclude(profile__user=request.user.id)
             context['iah'] = iah
-            connectList = Connect.objects.filter(Q(to_user=request.user.id)|Q(from_user=request.user.id))
+            connectList = Connect.objects.filter(Q(responser=request.user.id)|Q(requester=request.user.id))
             context['connectList']=connectList
             return render(request,'startup_main/iah.html', context)
         else:
-            connectList = Connect.objects.exclude(to_user=request.user.id,from_user=request.user.id)
+            connectList = Connect.objects.exclude(responser=request.user.id,requester=request.user.id)
             iah = IncubatorsAccelatorsHub.objects.filter(profile__user__is_active=True)
             context['iah'] = iah  
         return render(request,'startup_main/iah.html', context)
@@ -509,11 +589,11 @@ def networks(request,typeOf):
         if request.user.is_authenticated:
             investor = DonorFunder.objects.filter(profile__user__is_active=True).exclude(profile__user=request.user.id)
             context['investor'] = investor
-            connectList = Connect.objects.filter(Q(to_user=request.user.id)|Q(from_user=request.user.id))
+            connectList = Connect.objects.filter(Q(responser=request.user.id)|Q(requester=request.user.id))
             context['connectList']=connectList
             return render(request,'startup_main/investor.html', context)
         else:
-            connectList = Connect.objects.exclude(to_user=request.user.id,from_user=request.user.id)
+            connectList = Connect.objects.exclude(responser=request.user.id,requester=request.user.id)
             investor = DonorFunder.objects.filter(profile__user__is_active=True)
             context['investor'] = investor  
         return render(request,'startup_main/investor.html', context)
