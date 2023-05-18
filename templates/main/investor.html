@@ -1,6 +1,6 @@
 {% extends './base.html' %} 
 {% block content %} {% load static %} 
-{% include './header.html' %}
+{% include './header.html' %} 
 <script
   type="text/javascript"
   src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"
@@ -77,7 +77,6 @@
               {% csrf_token %}
             <div class="accordion accordion-flush" id="accordionFlushExample">
               {% for filter in filters %}
-
               <div class="accordion-item">
                 <h2 class="accordion-header" id="flush-headingOne">
                   <button
@@ -102,85 +101,67 @@
                 >
                   <div class="accordion-body">
                     <ul>
-                      {%if filter == 'Establishment Year' %}
-                      <li>
-                        <input
-                        id='daterange'
-                          type="text"
-                          name="daterange"
-                          value=""
-                          style="
-                            font-size: 10px;
-                            width: -webkit-fill-available;
-                            font-weight: 700;
-                          "
-                        />
-                      </li>
-                      {%endif%} {%if filter == 'Market Scope' %}
+                      
+                     
+
+
+                     
+                   
+
+
+                      {%if filter == 'Level' %}
                       <div class="form-check form-check-inline">
                         <input
                           class="form-check-input"
                           type="checkbox"
-                          id="Domestic"
-                          value="Domestic"
-                          name='market_scope'
+                          id="Pre-Startup"
+                          value="pre"
+                          name='level'
                         />
-                        <label class="form-check-label" for="Domestic"
-                          >Domestic</label
-                        >
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="International"
-                          value="International"
-                          name='market_scope'
-                        />
-                        <label class="form-check-label" for="International"
-                          >International</label
+                        <label class="form-check-label" for="Pre-Startup"
+                          >Pre-Startup</label
                         >
                       </div>
 
-                      {%endif%} {%if filter == 'Stage' %}
                       <div class="form-check form-check-inline">
                         <input
                           class="form-check-input"
                           type="checkbox"
-                          id="pre"
-                          value="pre start-up( early-stage)"
-                          name='stage'
+                          id="Mid-Startup"
+                          value="mid"
+                          name='level'
                         />
-                        <label class="form-check-label" for="pre"
-                          >pre start-up( early-stage)</label
-                        >
-                      </div>
-                     
-                      <div class="form-check form-check-inline">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="mid"
-                          value="mid start-up"
-                          name='stage'
-                        />
-                        <label class="form-check-label" for="mid"
-                          >mid start-up</label
+                        <label class="form-check-label" for="Mid-Startup"
+                          >Mid-Startup</label
                         >
                       </div>
                       <div class="form-check form-check-inline">
                         <input
                           class="form-check-input"
                           type="checkbox"
-                          id="ins"
-                          value="in-market"
-                          name='stage'
+                          id="Early Trsction"
+                          value="early"
+                          name='level'
                         />
-                        <label class="form-check-label" for="ins"
-                          >in-market</label
+                        <label class="form-check-label" for="Early Trsction"
+                          >Early Trsction</label
                         >
                       </div>
-                      {%endif%} {%if filter == 'Name' %}
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="In-Market"
+                          value="post"
+                          name='level'
+                        />
+                        <label class="form-check-label" for="In-Market"
+                          >In-Market</label
+                        >
+                      </div>
+                    
+                      {% endif %}
+                     {%if filter == 'Name' %}
                       <li>
                         <div class="checkboxes" ></div>
                         <script>
@@ -195,6 +176,118 @@
                         </script>
                       </li>
                       {%endif%}
+                      {%if filter == 'Donor Type' %}
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="self"
+                          value="self_"
+                          name='funded_by'
+                        />
+                        <label class="form-check-label" for="self"
+                          >self</label
+                        >
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="NGO"
+                          value="nGO"
+                          name='funded_by'
+                        />
+                        <label class="form-check-label" for="NGO"
+                          >NGO</label
+                        >
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="Grant"
+                          value="grant"
+                          name='funded_by'
+                        />
+                        <label class="form-check-label" for="Grant"
+                          >Grant</label
+                        >
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="International"
+                          value="International"
+                          name='funded_by'
+                        />
+                        <label class="form-check-label" for="International"
+                          >International</label
+                        >
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="Other"
+                          value="Other"
+                          name='funded_by'
+                        />
+                        <label class="form-check-label" for="Other"
+                          >Other</label
+                        >
+                      </div>
+                      {%endif%}
+                      {%if filter == 'Investment Type' %}
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="selection"
+                          value="selection"
+                          name='investment_type'
+                        />
+                        <label class="form-check-label" for="selection"
+                          >selection</label
+                        >
+                      </div>
+                       <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="finance"
+                          value="finance"
+                          name='investment_type'
+                        />
+                        <label class="form-check-label" for="finance"
+                          >finance</label
+                        >
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="working_space"
+                          value="working_space"
+                          name='investment_type'
+                        />
+                        <label class="form-check-label" for="working_space"
+                          >working space</label
+                        >
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="other"
+                          value="other"
+                          name='investment_type'
+                        />
+                        <label class="form-check-label" for="other"
+                          >other</label
+                        >
+                      </div>
+                      {% endif %}
                       {%if filter == 'Sector' %}
                       <div class="form-check form-check-inline">
                         <input
@@ -381,12 +474,13 @@
                         $(function () {
                           $("#reg_").on("change", function () {
                             
-                          geoserver_url= "http://localhost:8080/geoserver/admin/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=admin%3AETH_adm2&maxFeatures=50&outputFormat=application%2Fjson"
+                          geoserver_url= "http://localhost:8080/geoserver/Startup/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Startup%3AETH_adm2&maxFeatures=1000&outputFormat=application%2Fjson"
                         var self=this
                           $.getJSON( geoserver_url, function( data ) {
                               var items = [];
                               var wereda_names = data.features.filter(x=>x.properties['NAME_1']==self.value);
                               $("#wer_").empty()
+                              $("#wer_").append('<option value="">select wereda</option>')
                              wereda_names.forEach(function(e){
                               $("#wer_").append('<option value="'+e.properties['NAME_2']+'">'+e.properties['NAME_2'])+'</option>';
                               
@@ -406,10 +500,7 @@
                           ).val('');
                         });
                       </script>
-                      {% comment %}
-                      <li><a href="#">List one</a></li>
-                      <li><a href="#">List one</a></li>
-                      {% endcomment %}
+                      
                     </ul>
                   </div>
                 </div>
@@ -437,27 +528,28 @@
                     }
                 });
                 
-                obj[$('#daterange').attr('name')]=$('#daterange').val()
+                
                 obj[$('#reg_').attr('name')]=$('#reg_').val()
                 obj[$('#wer_').attr('name')]=$('#wer_').val()
                 const csrfmiddlewaretoken = document.querySelector(
                   "[name=csrfmiddlewaretoken]"
                 ).value;
-                $.ajax({
+                console.log(obj);
+              $.ajax({
                   headers: { "X-CSRFToken": csrfmiddlewaretoken },
-                  url: '{% url "main:filter" "startup" %}',
+                  url: '{% url "main:filter" "iah" %}',
                   data: JSON.stringify(obj),
                   dataType: 'html',
                   type: "POST",
                   success: function (data) {
                     $('#to_replaced').replaceWith(data)
-                    console.log(data)
+                    {% comment %} console.log(data) {% endcomment %}
                     
                   },
                   error: function (data) {
                   }
-                });
-                console.log(obj);
+                }); 
+                
             });
           </script>
           </div>
@@ -469,20 +561,20 @@
 
       <div class="col-lg-9" >
         <div class="row gy-12 posts-list" id="to_replaced">
-          {% for startup in startups %}
+          {% for i in investor %}
           <div class="col-lg-4">
             <article class="d-flex flex-column">
               <h2 class="title">
                 <img
-                  src="{{startup.profile.profile_pic.url}}"
+                  src="{{i.profile.profile_pic.url}}"
                   alt=""
                   style="max-width: 50px"
                 />&nbsp;
-                <a href="blog-details.html">{{startup.description.name}}</a>
+                <a href="blog-details.html">{{i.description.name}}</a>
               </h2>
 
               <div class="content">
-                <p>{{startup.description.description}}</p>
+                <p>{{i.description.description}}</p>
               </div>
 
               <div
@@ -491,24 +583,25 @@
               >
                 <button
                   class="btn btn-open"
-                  data-name="{{startup.description.name}}"
-                  data-description="{{startup.description.description}}"
-                  data-sector="{{startup.description.sector }}=='Other'?{{startup.description.other_sector}}:{{startup.description.sector}}"
-                  data-logo="{{startup.logo.url}}"
-                  data-establishmentyear="{{startup.establishment_year}}"
-                  data-marketscope="{{startup.market_scope}}"
-                  data-stage="{{startup.stage}}"
-                  data-country="{{startup.address.country}}"
-                  data-region="{{startup.address.location.regionId.region_name}}"
-                  data-wereda="{{startup.address.location.wereda_name}}"
-                  data-phonenumber="{{startup.address.phone_number}}"
-                  data-cityname="{{startup.address.city_name}}"
-                  data-website="{{startup.address.website}}"
-                  data-firstname="{{startup.profile.user.first_name}}"
-                  data-middilename="{{startup.profile.middile_name}}"
-                  data-lastname="{{startup.profile.user.last_name}}"
-                  data-email="{{startup.profile.user.email}}"
-                  data-gender="{{startup.profile.gender}}"
+                  data-name="{{i.description.name}}"
+                  data-description="{{i.description.description}}"
+                  data-sector="{{i.description.sector }}=='Other'?{{startup.description.other_sector}}:{{startup.description.sector}}"
+                  data-logo="{{i.description.logo.url}}"
+                  data-educationallevel="{{i.educational_level}}"
+                  data-educationalbackground="{{i.educational_background}}"
+                  data-iarea="{{i.i_area}}"
+                  data-airelated ="{{i.airelated_expriance}}"
+                  data-country="{{i.address.country}}"
+                  data-region="{{i.address.location.regionId.region_name}}"
+                  data-wereda="{{i.address.location.wereda_name}}"
+                  data-phonenumber="{{i.address.phone_number}}"
+                  data-cityname="{{i.address.city_name}}"
+                  data-website="{{i.address.website}}"
+                  data-firstname="{{i.profile.user.first_name}}"
+                  data-middilename="{{i.profile.middile_name}}"
+                  data-lastname="{{i.profile.user.last_name}}"
+                  data-email="{{i.profile.user.email}}"
+                  data-gender="{{i.profile.gender}}"
                   {%
                   comment
                   %}

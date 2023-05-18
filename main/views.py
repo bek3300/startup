@@ -57,7 +57,7 @@ def profile(request):
 
     
     def getGeoserverData():
-        url = "http://localhost:8080/geoserver/admin/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=admin%3AETH_adm2&maxFeatures=50&outputFormat=application%2Fjson"
+        url = "http://localhost:8080/geoserver/Startup/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Startup%3AETH_adm2&maxFeatures=1000&outputFormat=application%2Fjson"
         response = urlopen(url)
         data_json = json.loads(response.read())
         return data_json
@@ -155,7 +155,7 @@ def loginUser(request):
 
 
 def homePage(request):
-    return render (request,'startup/index.html',context)
+    return render (request,'main/index.html',context)
 
 def networkStartups(request):
     return render (request,'startup/network.html',context)

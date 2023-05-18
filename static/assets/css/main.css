@@ -253,6 +253,8 @@ section {
   font-weight: 300;
   color: var(--color-secondary);
   font-family: var(--font-secondary);
+  padding-top: 10px;
+  font-weight: 600;
 }
 
 .header .logo h1 span {
@@ -264,7 +266,7 @@ section {
 /* Facts Section
 --------------------------------*/
 #facts {
-  background: #f7f7f7;
+  /* background: #f7f7f7; */
   padding: 80px 0 60px 0;
 }
 
@@ -277,7 +279,6 @@ section {
 #facts .counters p {
   padding: 0;
   margin: 0 0 20px 0;
-  font-family: "Poppins", sans-serif;
   font-size: 14px;
 }
 
@@ -1131,6 +1132,9 @@ section {
 /*--------------------------------------------------------------
 # About Section
 --------------------------------------------------------------*/
+.about {
+  background: #f7f7f7;
+}
 .about .about-img {
   position: relative;
   margin: 60px 0 0 60px;
@@ -2240,11 +2244,12 @@ section {
 /*--------------------------------------------------------------
 # Contact Section
 --------------------------------------------------------------*/
-.contact .map {
-  margin-bottom: 40px;
+.facts .map {
+  height: 70vh; 
+  margin-top: 20px;
 }
 
-.contact .map iframe {
+.facts .map iframe {
   border: 0;
   width: 100%;
   height: 400px;
@@ -3073,7 +3078,6 @@ section {
   font-size: 14px;
   line-height: 24px;
   margin-bottom: 0;
-  font-family: var(--font-primary);
   color: var(--color-white);
 }
 
@@ -3173,7 +3177,7 @@ section {
 }
 
 .footer .footer-legal {
-  padding: 30px 0;
+  padding: 20px 0;
   background: var(--color-secondary-dark);
 }
 

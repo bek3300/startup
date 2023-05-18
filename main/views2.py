@@ -188,7 +188,7 @@ def loginUser(request):
         if request.user.is_authenticated:
             return HttpResponseRedirect(reverse('main:home'))
         else:
-            return render (request,'startup_main/login.html',context)
+            return render (request,'main/login.html',context)
         
 def homePage(request):
     context['startup'] = Startup.objects.all()
@@ -470,12 +470,12 @@ def networks(request,typeOf):
         if request.user.is_authenticated:
             connectList = Connect.objects.filter(Q(responser=request.user.id)|Q(requester=request.user.id))
             context['connectList']=connectList
-            return render(request,'startup_main/startup.html', context)
+            return render(request,'main/startup.html', context)
         else:
             connectList = Connect.objects.exclude(responser=request.user.id,requester=request.user.id)
             startups = Startup.objects.filter(profile__user__is_active=True)
             context['startups'] = startups
-            return render(request,'startup_main/startup.html', context)
+            return render(request,'main/startup.html', context)
     if(typeOf=='mentor'):
         for field in Mentor._meta.get_fields(include_parents=False):
             if isinstance(field, models.OneToOneField):
@@ -496,12 +496,12 @@ def networks(request,typeOf):
             context['mentors'] = mentors
             connectList = Connect.objects.filter(Q(responser=request.user.id)|Q(requester=request.user.id))
             context['connectList']=connectList
-            return render(request,'startup_main/mentor.html', context)
+            return render(request,'main/mentor.html', context)
         else:
             connectList = Connect.objects.exclude(responser=request.user.id,requester=request.user.id)
             mentors = Mentor.objects.filter(profile__user__is_active=True)
             context['mentors'] = mentors
-        return render(request,'startup_main/mentor.html', context)
+        return render(request,'main/mentor.html', context)
     if(typeOf=='incubator'):
         for field in IncubatorsAccelatorsHub._meta.get_fields(include_parents=False):
             if isinstance(field, models.OneToOneField):
@@ -522,12 +522,12 @@ def networks(request,typeOf):
             context['iah'] = iah
             connectList = Connect.objects.filter(Q(responser=request.user.id)|Q(requester=request.user.id))
             context['connectList']=connectList
-            return render(request,'startup_main/iah.html', context)
+            return render(request,'main/iah.html', context)
         else:
             connectList = Connect.objects.exclude(responser=request.user.id,requester=request.user.id)
             iah = IncubatorsAccelatorsHub.objects.filter(profile__user__is_active=True)
             context['iah'] = iah  
-        return render(request,'startup_main/iah.html', context)
+        return render(request,'main/iah.html', context)
     if(typeOf=='investor'):
         for field in DonorFunder._meta.get_fields(include_parents=False):
             if isinstance(field, models.OneToOneField):
@@ -548,12 +548,12 @@ def networks(request,typeOf):
             context['investor'] = investor
             connectList = Connect.objects.filter(Q(responser=request.user.id)|Q(requester=request.user.id))
             context['connectList']=connectList
-            return render(request,'startup_main/investor.html', context)
+            return render(request,'main/investor.html', context)
         else:
             connectList = Connect.objects.exclude(responser=request.user.id,requester=request.user.id)
             investor = DonorFunder.objects.filter(profile__user__is_active=True)
             context['investor'] = investor  
-        return render(request,'startup_main/investor.html', context)
+        return render(request,'main/investor.html', context)
 
 
 
@@ -594,7 +594,7 @@ def register(request):
         context['region_form']= RegionForm()
         context['wereda_form']= WeredaForm()
         context['user_form']= UserForm()
-        return render (request,'startup_main/registration.html',context)
+        return render (request,'main/registration.html',context)
     
 # sudo kill -9 `sudo lsof -t -i:9001`
 # 
@@ -630,7 +630,7 @@ def filter(request,typeOf):
                         if filterParams[param]:
                             startup = startup.filter(address__location__wereda_name=filterParams[param])
                 context['startups'] = startup
-                return render(request,'startup_main/startup_filters.html',context)
+                return render(request,'main/startup_filters.html',context)
         if typeOf=='mentor':
             filterParams=json.loads(list(request.POST)[0])
             if filterParams:
@@ -664,7 +664,7 @@ def filter(request,typeOf):
                         if filterParams[param]:
                             mentor = mentor.filter(address__location__wereda_name=filterParams[param])
                 context['mentors'] = mentor
-                return render(request,'startup_main/mentor_filters.html',context)
+                return render(request,'main/mentor_filters.html',context)
             
         if typeOf=='iah':
             filterParams=json.loads(list(request.POST)[0])
@@ -703,8 +703,8 @@ def filter(request,typeOf):
                         if filterParams[param]:
                             iah = iah.filter(address__location__wereda_name=filterParams[param])
                 context['iahs'] = iah
-                return render(request,'startup_main/iah_filters.html',context)   
-        return render(request,'startup_main/iah_filters.html',context)
+                return render(request,'main/iah_filters.html',context)   
+        return render(request,'main/iah_filters.html',context)
              
 
 
@@ -717,7 +717,7 @@ def getContent(request,typeOf):
     if typeOf == 'startups':
         #   print(typeOf)
           context['startups'] = Startup.objects.filter(profile__user__is_active=True).exclude(profile__user=request.user.id) if request.user.is_authenticated else Startup.objects.filter(profile__user__is_active=True)
-          return  render(request,'startup_main/startup_content.html',context)
+          return  render(request,'main/startup_content.html',context)
     if typeOf == 'mentors':
           print(typeOf)
     if typeOf == 'incubators':
@@ -734,7 +734,7 @@ def getContent(request,typeOf):
           print(typeOf)
     
      
-    return render(request,'startup_main/startup_filters.html',context)
+    return render(request,'main/startup_filters.html',context)
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse('main:login'))

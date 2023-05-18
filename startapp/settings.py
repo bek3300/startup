@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'nested_inline',
-    'mptt',
+    # 'mptt',
     'django_extensions',
     'bootstrap5',
     'crispy_forms',
