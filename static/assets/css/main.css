@@ -132,7 +132,7 @@ section {
   padding: 15px 0;
   background: rgba(var(--color-secondary-rgb), 0.05);
   min-height: 40px;
-  margin-top: 76px;
+  margin-top: 100px;
 }
 
 .breadcrumbs h2 {
@@ -233,7 +233,7 @@ section {
 # Header
 --------------------------------------------------------------*/
 .header {
-  padding: 15px 0;
+  padding: 15px 10px;
   transition: all 0.5s;
   z-index: 997;
 }
@@ -249,12 +249,13 @@ section {
 }
 
 .header .logo h1 {
-  font-size: 22px;
-  font-weight: 300;
-  color: var(--color-secondary);
+  font-size: 24px;
+  color: var(--color-primary);
   font-family: var(--font-secondary);
-  padding-top: 10px;
+  padding: 15px 0 0 8px;
   font-weight: 600;
+  text-transform: capitalize;
+  
 }
 
 .header .logo h1 span {
@@ -473,6 +474,14 @@ section {
   }
 }
 
+@media (min-width: 1280px) {
+
+  .mobile-nav-show,
+  .mobile-nav-hide {
+    display: none;
+  }
+}
+
 /*--------------------------------------------------------------
 # Mobile Navigation
 --------------------------------------------------------------*/
@@ -480,8 +489,10 @@ section {
   .navbar {
     position: fixed;
     top: 0;
-    left: -100%;
-    width: calc(100% - 70px);
+    right: -100%;
+    width: 100%;
+    max-width: 400px;
+    border-left: 1px solid #666;
     bottom: 0;
     transition: 0.3s;
     z-index: 9997;
@@ -490,9 +501,9 @@ section {
   .navbar ul {
     position: absolute;
     inset: 0;
-    padding: 10px 0;
+    padding: 50px 0 10px 0;
     margin: 0;
-    /* background: rgba(var(--color-secondary-rgb), 0.9); */
+    background: rgba(255, 255, 255, 0.9);
     overflow-y: auto;
     transition: 0.3s;
     z-index: 9998;
@@ -503,10 +514,12 @@ section {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 20px;
+    padding: 10px 20px;
+    font-family: var(--font-secondary);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.8);
     font-size: 16px;
-    font-weight: 500;
-    color: rgba(var(--color-white-rgb), 0.7);
+    font-weight: 600;
+    color: #7f7f90;
     white-space: nowrap;
     transition: 0.3s;
   }
@@ -519,10 +532,14 @@ section {
   }
 
   .navbar a:hover,
-  .navbar .active,
-  .navbar .active:focus,
   .navbar li:hover>a {
-    color: var(--color-white);
+    color: #000;
+  }
+
+  .navbar .active,
+  .navbar .active:focus {
+    color: #000;
+    border-color: var(--color-primary);
   }
 
   .navbar .dropdown ul,
@@ -532,7 +549,7 @@ section {
     padding: 10px 0;
     margin: 10px 20px;
     transition: all 0.5s ease-in-out;
-    border: 1px solid rgba(var(--color-secondary-light-rgb), 0.3);
+    border: 1px solid #eee;
   }
 
   .navbar .dropdown>.dropdown-active,
@@ -540,42 +557,61 @@ section {
     display: block;
   }
 
-  .mobile-nav-toggle {
-    display: block !important;
+  .mobile-nav-show {
     color: var(--color-secondary);
     font-size: 28px;
     cursor: pointer;
     line-height: 0;
     transition: 0.5s;
-    position: fixed;
-    top: 20px;
     z-index: 9999;
-    right: 20px;
+    margin: 0 10px 0 20px;
   }
 
-  .mobile-nav-toggle.bi-x {
-    color: var(--color-white);
+  .mobile-nav-hide {
+    color: var(--color-secondary);
+    font-size: 32px;
+    cursor: pointer;
+    line-height: 0;
+    transition: 0.5s;
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    z-index: 9999;
   }
 
   .mobile-nav-active {
     overflow: hidden;
-    z-index: 9995;
-    position: relative;
   }
 
   .mobile-nav-active .navbar {
-    left: 0;
+    right: 0;
   }
 
   .mobile-nav-active .navbar:before {
     content: "";
     position: fixed;
     inset: 0;
-    background: rgba(var(--color-secondary-rgb), 0.8);
+    background: rgba(255, 255, 255, 0.8);
     z-index: 9996;
   }
 }
 
+.header .btn-book-a-table,
+.header .btn-book-a-table:focus {
+  font-size: 14px;
+  color: #fff;
+  background: var(--color-primary);
+  padding: 8px 20px;
+  margin-left: 30px;
+  border-radius: 50px;
+  transition: 0.3s;
+}
+
+.header .btn-book-a-table:hover,
+.header .btn-book-a-table:focus:hover {
+  color: #fff;
+  background: rgba(206, 18, 18, 0.8);
+}
 /*--------------------------------------------------------------
 # Index Page
 --------------------------------------------------------------*/

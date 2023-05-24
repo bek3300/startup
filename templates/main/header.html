@@ -1,10 +1,59 @@
   {% load static %}
     <!-- ======= Header ======= -->
-    <header id="header" class="header fixed-top" data-scrollto-offset="0">
-      <div class="container-fluid d-flex align-items-center justify-content-between">
+    <!-- <header id="header" class="header fixed-top" data-scrollto-offset="0"> -->
+      <!-- <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+          <a href="/" class="logo d-flex align-items-center scrollto me-auto me-lg-0">
+            <img src="{% static 'assets/img/AII-logo.png'%}" alt="">
+            <h1><span></span>Start-Up</h1>
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <li><a class="nav-link scrollto" href="/">Home</a></li>
+              </li>
+              <li class="nav-item">
+                <li><a class="nav-link scrollto" href="/#about">About</a></li>
+              </li>
+              <li class="dropdown"><a href="#"><span>Network</span> <i class="bi bi-chevron-down"></i></a>
+                <ul>
+                  <li><a href="{% url 'main:networks' 'startup' %}">Startups</a></li>
+                  <li><a href="{% url 'main:networks' 'mentor' %}">Mentors</a></li>
+                  <li><a href="{% url 'main:networks' 'incubator' %}">Incubators</a></li>
+                  <li><a href="{% url 'main:networks' 'investor' %}">Investors</a></li>
+                  <li><a href="{% url 'main:networks' 'government' %}">Gov't Bodies</a></li>
+                  <li><a href="#">Disc. Forums</a></li>
+                </ul>
+              </li>
+              <li><a class="nav-link scrollto" href="#">Resources</a></li>
+              <li><a class="nav-link scrollto" href="#">Announcemets</a></li>
+              <li><a class="nav-link scrollto" href="/#contact">Contact</a></li>
+            </ul>
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              {%  if  request.user.is_authenticated %}
+              <li class="dropdown"><a href="#"><span><img src="{% static 'assets/img/AII-logo.png' %}" alt="" class="mr-5" style="max-height: 40px;"></span></a>
+                <ul>
+                  <li><a href="{% url 'main:profile'%}">{{ user.username }}</a></li>
+                  <li><a href="{% url 'main:logout'%}">Sign out</a></li>
+                </ul>
+              </li>
+              {% elif not request.user.is_authenticated %}
+              <li><a class="btn button-login" href="{% url 'main:login' %}">Login</a></li>
+              <li><a class="btn button-signup" href="{% url 'main:register' %}">Signup</a></li>
+             {% else %}
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+      </nav> -->
+
+
+      <!-- <div class="container-fluid d-flex align-items-center justify-content-between">
   
         <a href="/" class="logo d-flex align-items-center scrollto me-auto me-lg-0">
-          <!-- Uncomment the line below if you also wish to use an image logo -->
           <img src="{% static 'assets/img/AII-logo.png'%}" alt="">
           <h1><span></span>Start-Up</h1>
         </a>
@@ -49,15 +98,65 @@
             </ul>
             <ul>
             </ul>
-            
-            
           </div>
         </nav>
-        <!-- .navbar -->
         
   
+      </div> -->
+    <!-- </header> -->
+
+
+    <header id="header" class="header fixed-top d-flex align-items-center">
+      <div class="container d-flex align-items-center justify-content-between">
+  
+        <a href="/" class="logo d-flex align-items-center me-auto me-lg-0">
+          <img src="{% static 'assets/img/AII-logo.png'%}" alt="">
+          <h1>AII-Startup</h1>
+        </a>
+  
+        <nav id="navbar" class="navbar">
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/#about">About</a></li>
+            <li class="dropdown"><a href="#"><span>Network</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
+              <ul>
+                <li><a href="{% url 'main:networks' 'startup' %}">Startups</a></li>
+                <li><a href="{% url 'main:networks' 'mentor' %}">Mentors</a></li>
+                <li><a href="{% url 'main:networks' 'incubator' %}">Incubators</a></li>
+                <li><a href="{% url 'main:networks' 'investor' %}">Investors</a></li>
+                <li><a href="{% url 'main:networks' 'government' %}">Gov't Bodies</a></li>
+                <li><a href="#">Disc. Forums</a></li>
+              </ul>
+            </li>
+            <li><a href="#">Resources</a></li>
+            <li><a href="#">Announcemets</a></li>
+            <li><a href="/#contact">Contact</a></li>
+          </ul>
+        </nav><!-- .navbar -->
+        
+        {%  if  request.user.is_authenticated %}
+        <ul class="navbar" style="list-style: none;">
+          <li class="dropdown"><a href="#"><span><img src="{% static 'assets/img/AII-logo.png' %}" alt="" class="mr-5" style="max-height: 40px;"></span></a>
+            <ul>
+              <li><a href="{% url 'main:profile'%}">{{ user.username }}</a></li>
+              <li><a href="{% url 'main:logout'%}">Sign out</a></li>
+            </ul>
+          </li>
+        </ul>
+        {% elif not request.user.is_authenticated %}
+
+        <a class="btn-book-a-table" href="{% url 'main:login' %}">Login</a>
+        <a class="btn-book-a-table" href="{% url 'main:register' %}">Signup</a>
+
+        {% else %}
+        {% endif %}
+
+        <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+        <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+  
       </div>
-    </header><!-- End Header -->
+    </header>
+    <!-- End Header -->
 
 
 

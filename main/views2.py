@@ -737,5 +737,5 @@ def getContent(request,typeOf):
     return render(request,'main/startup_filters.html',context)
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse('main:login'))
+    return HttpResponseRedirect(reverse('main:homepage'))
 
